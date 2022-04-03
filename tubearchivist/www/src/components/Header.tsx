@@ -1,3 +1,5 @@
+import dynamic from "next/dynamic";
+
 const Header = ({ authData }) => {
   const { session, status } = authData;
 
@@ -10,5 +12,9 @@ const Header = ({ authData }) => {
     </>
   );
 };
+
+export const DynamicHeader = dynamic(() => import("../components/Header"), {
+  suspense: true,
+});
 
 export default Header;
