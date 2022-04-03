@@ -29,9 +29,6 @@ export default NextAuth({
           password: credentials.password,
         };
 
-        //debug
-        console.log("Payload", payload);
-
         const res = await fetch("http://localhost:8000/api/login/", {
           method: "POST",
           body: JSON.stringify(payload),
