@@ -1,9 +1,28 @@
 import type { NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
+import dynamic from "next/dynamic";
 import Head from "next/head";
+import { Suspense } from "react";
+
+const DynamicHeader = dynamic(() => import("../components/Header"), {
+  suspense: true,
+});
+
+const SignInOutButton = ({ isSignedIn }: { isSignedIn: boolean }) => {
+  if (isSignedIn) {
+    return <button onClick={() => signOut()}>Sign Out</button>;
+  }
+  return <button onClick={() => signIn()}>Sign in</button>;
+};
 
 const Home: NextPage = () => {
   const { data: session, status } = useSession();
+  const authData = {
+    session,
+    status,
+  };
+
+  console.log(status);
 
   return (
     <>
@@ -13,12 +32,10 @@ const Home: NextPage = () => {
         <link rel="icon" href="/favicon/favicon.ico" />
       </Head>
 
-      {console.log("Session", session)}
+      <Suspense fallback={<h1>Loading</h1>}>
+        <DynamicHeader authData={authData} />
+      </Suspense>
 
-      <h1>Name: {session?.user?.name}</h1>
-      <h1>Status: {status}</h1>
-      <h1>Token: {session?.ta_token?.token}</h1>
-      <h1>User ID: {session?.ta_token?.user_id}</h1>
       <div
         style={{
           display: "flex",
@@ -26,8 +43,7 @@ const Home: NextPage = () => {
           maxWidth: "100px",
         }}
       >
-        <button onClick={() => signIn()}>Sign in</button>
-        <button onClick={() => signOut()}>Sign Out</button>
+        <SignInOutButton isSignedIn={!!session?.user} />
       </div>
     </>
   );
