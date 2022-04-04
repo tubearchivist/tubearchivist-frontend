@@ -1,9 +1,9 @@
-import type { NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
-import Head from "next/head";
-import { Suspense } from "react";
+import { Videos } from "../types/video";
 import { CustomHead } from "../components/CustomHead";
-import { DynamicHeader } from "../components/Header";
+import { Layout } from "../components/Layout";
+import { VideoList } from "../components/VideoList";
 
 const SignInOutButton = ({ isSignedIn }: { isSignedIn: boolean }) => {
   if (isSignedIn) {
@@ -12,7 +12,7 @@ const SignInOutButton = ({ isSignedIn }: { isSignedIn: boolean }) => {
   return <button onClick={() => signIn()}>Sign in</button>;
 };
 
-const Home: NextPage = () => {
+const Home: NextPage<{ videos: Videos }> = ({ videos }) => {
   const { data: session, status } = useSession();
   const authData = {
     session,
@@ -23,21 +23,26 @@ const Home: NextPage = () => {
     <>
       <CustomHead />
 
-      <Suspense fallback={<h1>Loading</h1>}>
-        <DynamicHeader authData={authData} />
-      </Suspense>
-
-      <div
-        style={{
-          display: "flex",
-          flexDirection: "column",
-          maxWidth: "100px",
-        }}
-      >
+      <Layout>
+        <VideoList videos={videos} />
         <SignInOutButton isSignedIn={!!session?.user} />
-      </div>
+      </Layout>
     </>
   );
 };
 
 export default Home;
+
+export const getServerSideProps: GetServerSideProps = async (ctx) => {
+  const response = await fetch("http://localhost:8000/api/video/", {
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Token b4d4330462c7fc16c51873e45579b29a1a12fc90`,
+      mode: "no-cors",
+    },
+  });
+  const videos = await response.json();
+
+  return { props: { videos } };
+};
