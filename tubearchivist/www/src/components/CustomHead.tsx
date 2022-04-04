@@ -1,6 +1,9 @@
 import Head from "next/head";
 
-export const CustomHead = ({ title }: { title: string }) => {
+/**
+ * TODO: Dynamically get the title
+ */
+export const CustomHead = ({ title }: { title?: string }) => {
   return (
     <Head>
       <meta charSet="UTF-8" />
