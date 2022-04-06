@@ -1,33 +1,40 @@
 import NextImage from "next/image";
+import NextLink from "next/link";
 import BannerDark from "../images/banner-tube-archivist-dark.png";
 import IconSearch from "../images/icon-search.svg";
 import IconGear from "../images/icon-gear.svg";
 import IconExit from "../images/icon-exit.svg";
+import { signIn, signOut, useSession } from "next-auth/react";
 
 /** TODO: Fix these nav links */
 export const Nav = () => {
+  const { data: session } = useSession();
   return (
     <div className="boxed-content">
       <div className="top-banner">
-        <a href="/">
-          {/* {% if colors == 'dark */}
-          <NextImage
-            width={700}
-            height={150}
-            src={BannerDark}
-            alt="tube-archivist-banner"
-          />
-          {/* {% endif %} */}
-          {/* {% if colors == 'light */}
-          {/* <img src="/img/banner-tube-archivist-light.png" alt="tube-archivist-banner"> */}
-          {/* {% endif %} */}
-        </a>
+        <NextLink href="/">
+          <a>
+            {/* {% if colors == 'dark */}
+            <NextImage
+              width={700}
+              height={150}
+              src={BannerDark}
+              alt="tube-archivist-banner"
+            />
+            {/* {% endif %} */}
+            {/* {% if colors == 'light */}
+            {/* <img src="/img/banner-tube-archivist-light.png" alt="tube-archivist-banner"> */}
+            {/* {% endif %} */}
+          </a>
+        </NextLink>
       </div>
       <div className="top-nav">
         <div className="nav-items">
-          <a href="/">
-            <div className="nav-item">home</div>
-          </a>
+          <NextLink href="/">
+            <a>
+              <div className="nav-item">home</div>
+            </a>
+          </NextLink>
           <a href="/channel">
             <div className="nav-item">channels</div>
           </a>
@@ -57,7 +64,10 @@ export const Nav = () => {
               title="Settings"
             />
           </a>
-          <a href="/logout">
+          <a
+            style={{ cursor: "pointer" }}
+            onClick={!!session?.user ? () => signOut() : () => signIn()}
+          >
             <NextImage
               width={40}
               height={40}
