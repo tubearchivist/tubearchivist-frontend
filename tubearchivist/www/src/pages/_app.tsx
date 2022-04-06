@@ -28,11 +28,6 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
         strategy="lazyOnload"
         src="https://www.gstatic.com/cv/js/sender/v1/cast_sender.js?loadCastFramework=1"
       /> */}
-      <Script
-        onError={(e) => console.log(`Error loading script.js: ${e}`)}
-        strategy="lazyOnload"
-        src="/js/script.js"
-      />
 
       {/** TODO: Detect casting before loading this? */}
       {/* <ClientOnlyScript strategy="lazyOnload" src="/js/cast-videos.js" /> */}
