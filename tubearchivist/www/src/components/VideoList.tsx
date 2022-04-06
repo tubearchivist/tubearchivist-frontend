@@ -43,7 +43,7 @@ export const VideoList = ({ videos }: { videos: Videos }) => {
                 light="false"
                 playing // TODO: Not currently working
                 playsinline
-                url={`http://localhost:8000/media/${selectedVideoUrl.media_url}`}
+                url={`${process.env.NEXT_PUBLIC_TUBEARCHIVIST_URL}/media/${selectedVideoUrl.media_url}`}
               />
               <div className="player-title boxed-content">
                 <NextImage
@@ -171,7 +171,7 @@ export const VideoList = ({ videos }: { videos: Videos }) => {
                   <div className="video-thumb-wrap list">
                     <div className="video-thumb">
                       <NextImage
-                        src={`http://localhost:8000/cache/${video.vid_thumb_url}`}
+                        src={`${process.env.NEXT_PUBLIC_TUBEARCHIVIST_URL}/cache/${video.vid_thumb_url}`}
                         alt="video-thumb"
                         width={250}
                         height={141}
