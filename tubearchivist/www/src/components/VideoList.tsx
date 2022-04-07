@@ -1,10 +1,11 @@
-import { Datum, Videos } from "../types/video";
 import NextImage from "next/image";
-import ReactPlayer from "react-player/file";
 import { useState } from "react";
-import IconPlay from "../images/icon-play.svg";
+import ReactPlayer from "react-player/file";
 import IconClose from "../images/icon-close.svg";
+import IconPlay from "../images/icon-play.svg";
+import { TA_BASE_URL } from "../lib/constants";
 import { formatNumbers } from "../lib/utils";
+import { Datum, Videos } from "../types/video";
 
 export const VideoList = ({ videos }: { videos: Videos }) => {
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<Datum>();
@@ -162,89 +163,93 @@ export const VideoList = ({ videos }: { videos: Videos }) => {
         </div>
         <div className="video-list list">
           {videos &&
-            videos?.data?.map((video) => (
-              <div key={video.youtube_id} className="video-item list">
-                <a
-                  style={{ cursor: "pointer" }}
-                  onClick={() => handleSelectedVideo(video)}
-                >
-                  <div className="video-thumb-wrap list">
-                    <div className="video-thumb">
-                      <NextImage
-                        src={`${process.env.NEXT_PUBLIC_TUBEARCHIVIST_URL}/cache/${video.vid_thumb_url}`}
-                        alt="video-thumb"
-                        width={250}
-                        height={141}
-                      />
-                      {/* {% if video.source.player.progress %} */}
-                      <div
-                        className="video-progress-bar"
-                        id={`progress-${video.youtube_id}`}
-                        // style={{ width: video.player.progress }} // TODO: /video/youtube_id/progress
-                      ></div>
-                      {/* {% else %} */}
-                      <div
-                        className="video-progress-bar"
-                        id={`progress-${video.youtube_id}`}
-                        style={{ width: "0%" }}
-                      ></div>
-                      {/* {% endif %} */}
-                    </div>
-                    <div className="video-play">
-                      <NextImage
-                        width={40}
-                        height={40}
-                        src={IconPlay}
-                        alt="play-icon"
-                      />
-                    </div>
-                  </div>
-                </a>
-                <div className="video-desc list">
-                  <div
-                    className="video-desc-player"
-                    id={`video-info-${video.youtube_id}`}
+            videos?.data?.map((video) => {
+              return (
+                <div key={video.youtube_id} className="video-item list">
+                  <a
+                    style={{ cursor: "pointer" }}
+                    onClick={() => handleSelectedVideo(video)}
                   >
-                    {video.player.watched ? (
-                      <img
-                        src="/img/icon-seen.svg"
-                        alt="seen-icon"
-                        data-id={video.youtube_id}
-                        data-status="watched"
-                        // onClick="updateVideoWatchStatus(this)"
-                        className="watch-button"
-                        title="Mark as unwatched"
-                      />
-                    ) : (
-                      <img
-                        src="/img/icon-unseen.svg"
-                        alt="unseen-icon"
-                        data-id={video.youtube_id}
-                        data-status="unwatched"
-                        // onClick="updateVideoWatchStatus(this)"
-                        className="watch-button"
-                        title="Mark as watched"
-                      />
-                    )}
-
-                    <span>
-                      {video.published} | {video.player.duration_str}
-                    </span>
-                  </div>
-                  <div>
-                    <a href={`/channel/${video.channel.channel_id}`}>
-                      <h3>{video.channel.channel_name}</h3>
-                    </a>
-                    <a
-                      className="video-more"
-                      href={`/video/${video.youtube_id}`}
+                    <div className="video-thumb-wrap list">
+                      <div className="video-thumb">
+                        <NextImage
+                          src={`${TA_BASE_URL}/cache/${video.vid_thumb_url}`}
+                          alt="video-thumb"
+                          width={250}
+                          height={145}
+                          // blurDataURL={placeholder}
+                          // placeholder="blur"
+                        />
+                        {/* {% if video.source.player.progress %} */}
+                        <div
+                          className="video-progress-bar"
+                          id={`progress-${video.youtube_id}`}
+                          // style={{ width: video.player.progress }} // TODO: /video/youtube_id/progress
+                        ></div>
+                        {/* {% else %} */}
+                        <div
+                          className="video-progress-bar"
+                          id={`progress-${video.youtube_id}`}
+                          style={{ width: "0%" }}
+                        ></div>
+                        {/* {% endif %} */}
+                      </div>
+                      <div className="video-play">
+                        <NextImage
+                          width={40}
+                          height={40}
+                          src={IconPlay}
+                          alt="play-icon"
+                        />
+                      </div>
+                    </div>
+                  </a>
+                  <div className="video-desc list">
+                    <div
+                      className="video-desc-player"
+                      id={`video-info-${video.youtube_id}`}
                     >
-                      <h2>{video.title}</h2>
-                    </a>
+                      {video.player.watched ? (
+                        <img
+                          src="/img/icon-seen.svg"
+                          alt="seen-icon"
+                          data-id={video.youtube_id}
+                          data-status="watched"
+                          // onClick="updateVideoWatchStatus(this)"
+                          className="watch-button"
+                          title="Mark as unwatched"
+                        />
+                      ) : (
+                        <img
+                          src="/img/icon-unseen.svg"
+                          alt="unseen-icon"
+                          data-id={video.youtube_id}
+                          data-status="unwatched"
+                          // onClick="updateVideoWatchStatus(this)"
+                          className="watch-button"
+                          title="Mark as watched"
+                        />
+                      )}
+
+                      <span>
+                        {video.published} | {video.player.duration_str}
+                      </span>
+                    </div>
+                    <div>
+                      <a href={`/channel/${video.channel.channel_id}`}>
+                        <h3>{video.channel.channel_name}</h3>
+                      </a>
+                      <a
+                        className="video-more"
+                        href={`/video/${video.youtube_id}`}
+                      >
+                        <h2>{video.title}</h2>
+                      </a>
+                    </div>
                   </div>
                 </div>
-              </div>
-            ))}
+              );
+            })}
         </div>
       </div>
     </>
