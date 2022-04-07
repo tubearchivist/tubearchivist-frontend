@@ -29,14 +29,17 @@ export default NextAuth({
           password: credentials.password,
         };
 
-        const res = await fetch("http://localhost:8000/api/login/", {
-          method: "POST",
-          body: JSON.stringify(payload),
-          headers: {
-            "Content-Type": "application/json",
-            "Accept-Language": "en-US",
-          },
-        });
+        const res = await fetch(
+          `${process.env.NEXT_PUBLIC_TUBEARCHIVIST_URL}/api/login/`,
+          {
+            method: "POST",
+            body: JSON.stringify(payload),
+            headers: {
+              "Content-Type": "application/json",
+              "Accept-Language": "en-US",
+            },
+          }
+        );
 
         const ta_token: TA_Token = await res.json();
         // If no error and we have user data, return it
