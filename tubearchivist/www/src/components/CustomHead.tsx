@@ -2,6 +2,7 @@ import Head from "next/head";
 
 /**
  * TODO: Dynamically get the title
+ * TODO: NextJS recommended pattern for SEO
  */
 export const CustomHead = ({ title }: { title?: string }) => {
   return (
@@ -38,11 +39,9 @@ export const CustomHead = ({ title }: { title?: string }) => {
       <meta name="msapplication-TileColor" content="#01202e" />
       <meta name="msapplication-config" content="/favicon/browserconfig.xml" />
       <meta name="theme-color" content="#01202e" />
-      {/* {% if title %} */}
-      <title>TA | {{ title }}</title>
-      {/* {% else %} */}
-      <title>TubeArchivist</title>
-      {/* {% endif %} */}
+
+      {title ? <title>TA | {title}</title> : <title>TubeArchivist</title>}
+
       {/* {% if colors == "dark" %} */}
       {/* <link rel="stylesheet" href="/css/dark.css" /> */}
       {/* {% else %} */}
