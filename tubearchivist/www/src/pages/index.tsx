@@ -1,9 +1,15 @@
 import type { GetServerSideProps, NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
-import { Videos } from "../types/video";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import { VideoList } from "../components/VideoList";
+import { getVideos } from "../lib/getVideos";
+import { Videos } from "../types/video";
+
+type HomeProps = {
+  videos: Videos;
+  imagePlaceholders?: string[];
+};
 
 const SignInOutButton = ({ isSignedIn }: { isSignedIn: boolean }) => {
   if (isSignedIn) {
@@ -12,7 +18,7 @@ const SignInOutButton = ({ isSignedIn }: { isSignedIn: boolean }) => {
   return <button onClick={() => signIn()}>Sign in</button>;
 };
 
-const Home: NextPage<{ videos: Videos }> = ({ videos }) => {
+const Home: NextPage<HomeProps> = ({ videos }) => {
   const { data: session, status } = useSession();
   const authData = {
     session,
@@ -33,19 +39,10 @@ const Home: NextPage<{ videos: Videos }> = ({ videos }) => {
 
 export default Home;
 
+// http://localhost:8000/cache/videos/3/37Kn-kIsVu8.jpg
+
 export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const response = await fetch(
-    `${process.env.NEXT_PUBLIC_TUBEARCHIVIST_URL}/api/video/`,
-    {
-      headers: {
-        Accept: "application/json",
-        "Content-Type": "application/json",
-        Authorization: `Token b4d4330462c7fc16c51873e45579b29a1a12fc90`,
-        mode: "no-cors",
-      },
-    }
-  );
-  const videos = await response.json();
+  const videos = await getVideos();
 
   return { props: { videos } };
 };
