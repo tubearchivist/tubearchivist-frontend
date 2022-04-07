@@ -35,9 +35,11 @@ export const Nav = () => {
               <div className="nav-item">home</div>
             </a>
           </NextLink>
-          <a href="/channel">
-            <div className="nav-item">channels</div>
-          </a>
+          <NextLink href="/channel">
+            <a>
+              <div className="nav-item">channels</div>
+            </a>
+          </NextLink>
           <a href="/playlist">
             <div className="nav-item">playlists</div>
           </a>
@@ -48,7 +50,7 @@ export const Nav = () => {
         <div className="nav-icons">
           <a href="/search">
             <NextImage
-              width={40}
+              width={50}
               height={40}
               src={IconSearch}
               alt="search-icon"
@@ -57,7 +59,7 @@ export const Nav = () => {
           </a>
           <a href="/settings">
             <NextImage
-              width={40}
+              width={50}
               height={40}
               src={IconGear}
               alt="gear-icon"
@@ -69,7 +71,7 @@ export const Nav = () => {
             onClick={!!session?.user ? () => signOut() : () => signIn()}
           >
             <NextImage
-              width={40}
+              width={50}
               height={40}
               className="alert-hover"
               src={IconExit}
