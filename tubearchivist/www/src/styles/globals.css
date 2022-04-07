@@ -1,15 +1,3 @@
-@font-face {
-  font-family: "Sen-Bold";
-  src: url("/font/Sen-Bold.woff");
-  font-family: "Sen-Bold";
-}
-
-@font-face {
-  font-family: "Sen-Regular";
-  src: url("/font/Sen-Regular.woff");
-  font-family: "Sen-Regular";
-}
-
 * {
   margin: 0;
   padding: 0;
