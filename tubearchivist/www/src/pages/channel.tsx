@@ -76,18 +76,18 @@ const Channel: NextPage<{ channels: Channel }> = ({ channels }) => {
               />
             </div>
           </div>
-          <h2>Total matching channels: {channels.data.length} </h2>
+          <h2>Total matching channels: {channels?.data?.length} </h2>
           <div className="channel-list list">
             {/* {% if results %}
             {% for channel in results %} */}
             {channels &&
-              channels.data.map((channel) => {
+              channels?.data?.map((channel) => {
                 return (
-                  <div key={channel.channel_id} className="channel-item list">
+                  <div key={channel?.channel_id} className="channel-item list">
                     <div className="channel-banner list">
                       <a href="{% url 'channel_id' channel.source.channel_id %}">
                         <img
-                          src={`${TA_BASE_URL}${channel.channel_banner_url}`}
+                          src={`${TA_BASE_URL}${channel?.channel_banner_url}`}
                           alt="{{ channel.source.channel_id }}-banner"
                         />
                       </a>
@@ -97,7 +97,7 @@ const Channel: NextPage<{ channels: Channel }> = ({ channels }) => {
                         <div className="round-img">
                           <a href="{% url 'channel_id' channel.source.channel_id %}">
                             <img
-                              src={`${TA_BASE_URL}${channel.channel_thumb_url}`}
+                              src={`${TA_BASE_URL}${channel?.channel_thumb_url}`}
                               alt="channel-thumb"
                             />
                           </a>
@@ -106,17 +106,19 @@ const Channel: NextPage<{ channels: Channel }> = ({ channels }) => {
                           <h3>
                             <a href="{% url 'channel_id' channel.source.channel_id %}">
                               {" "}
-                              {channel.channel_name}{" "}
+                              {channel?.channel_name}{" "}
                             </a>
                           </h3>
                           {/* {% if channel.source.channel_subs >= 1000000 %} */}
-                          <p>Subscribers: {channel.channel_subs} </p>
+                          <p>Subscribers: {channel?.channel_subs} </p>
                           {/* {% else %} */}
                         </div>
                       </div>
                       <div className="info-box-item">
                         <div>
-                          <p>Last refreshed: {channel.channel_last_refresh} </p>
+                          <p>
+                            Last refreshed: {channel?.channel_last_refresh}{" "}
+                          </p>
                           {/* {% if channel.source.channel_subscribed %} */}
                           <button
                             className="unsubscribe"
