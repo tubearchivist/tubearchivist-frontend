@@ -1,14 +1,18 @@
 import NextImage from "next/image";
 import { useState } from "react";
 import ReactPlayer from "react-player/file";
+import { useQuery } from "react-query";
 import IconClose from "../images/icon-close.svg";
 import IconPlay from "../images/icon-play.svg";
 import { TA_BASE_URL } from "../lib/constants";
+import { getVideos } from "../lib/getVideos";
 import { formatNumbers } from "../lib/utils";
 import { Datum, Videos } from "../types/video";
 
-export const VideoList = ({ videos }: { videos: Videos }) => {
+export const VideoList = () => {
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<Datum>();
+  const { data: queryData } = useQuery("videos", getVideos);
+  const { data: videos } = queryData;
 
   const handleSelectedVideo = (video: Datum) => {
     setSelectedVideoUrl(video);
@@ -163,7 +167,7 @@ export const VideoList = ({ videos }: { videos: Videos }) => {
         </div>
         <div className="video-list list">
           {videos &&
-            videos?.data?.map((video) => {
+            videos?.map((video) => {
               return (
                 <div key={video.youtube_id} className="video-item list">
                   <a

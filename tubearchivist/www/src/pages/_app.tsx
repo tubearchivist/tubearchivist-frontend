@@ -1,8 +1,11 @@
 import type { AppProps } from "next/app";
 import { SessionProvider } from "next-auth/react";
 import Script, { ScriptProps } from "next/script";
+import { Hydrate, QueryClient, QueryClientProvider } from "react-query";
+import { ReactQueryDevtools } from "react-query/devtools";
 import "../styles/globals.css";
 import "../styles/dark.css"; // TODO: Setup themeing the React way
+import { useState } from "react";
 
 // TODO: Do these scripts need to be on every page?
 
@@ -22,6 +25,7 @@ const ClientOnlyScript = ({ src, ...props }: ClientOnlyScriptProps) => {
 };
 
 function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
+  const [queryClient] = useState(() => new QueryClient());
   return (
     <>
       {/* <Script
@@ -31,10 +35,14 @@ function MyApp({ Component, pageProps: { session, ...pageProps } }: AppProps) {
 
       {/** TODO: Detect casting before loading this? */}
       {/* <ClientOnlyScript strategy="lazyOnload" src="/js/cast-videos.js" /> */}
-
-      <SessionProvider session={session}>
-        <Component {...pageProps} />
-      </SessionProvider>
+      <QueryClientProvider client={queryClient}>
+        <ReactQueryDevtools />
+        <Hydrate state={pageProps.dehydratedState}>
+          <SessionProvider session={session}>
+            <Component {...pageProps} />
+          </SessionProvider>
+        </Hydrate>
+      </QueryClientProvider>
     </>
   );
 }

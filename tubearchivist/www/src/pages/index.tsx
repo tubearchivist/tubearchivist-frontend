@@ -1,5 +1,6 @@
-import type { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps, GetStaticProps, NextPage } from "next";
 import { signIn, signOut, useSession } from "next-auth/react";
+import { dehydrate, QueryClient } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import { VideoList } from "../components/VideoList";
@@ -18,7 +19,7 @@ const SignInOutButton = ({ isSignedIn }: { isSignedIn: boolean }) => {
   return <button onClick={() => signIn()}>Sign in</button>;
 };
 
-const Home: NextPage<HomeProps> = ({ videos }) => {
+const Home: NextPage<HomeProps> = () => {
   const { data: session, status } = useSession();
   const authData = {
     session,
@@ -30,7 +31,7 @@ const Home: NextPage<HomeProps> = ({ videos }) => {
       <CustomHead />
 
       <Layout>
-        <VideoList videos={videos} />
+        <VideoList />
         <SignInOutButton isSignedIn={!!session?.user} />
       </Layout>
     </>
@@ -41,8 +42,20 @@ export default Home;
 
 // http://localhost:8000/cache/videos/3/37Kn-kIsVu8.jpg
 
-export const getServerSideProps: GetServerSideProps = async (ctx) => {
-  const videos = await getVideos();
+// export const getServerSideProps: GetServerSideProps = async (ctx) => {
+//   const videos = await getVideos();
 
-  return { props: { videos } };
+//   return { props: { videos } };
+// };
+
+export const getStaticProps: GetStaticProps = async () => {
+  const queryClient = new QueryClient();
+
+  await queryClient.prefetchQuery("videos", getVideos);
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
 };
