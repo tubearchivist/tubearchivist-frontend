@@ -50,6 +50,9 @@
                         },
                         "index_playlists": {
                             "type": "boolean"
+                        },
+                        "integrate_sponsorblock": {
+                            "type" : "boolean"
                         }
                     }
                 }
@@ -130,6 +133,9 @@
                                 },
                                 "index_playlists": {
                                     "type": "boolean"
+                                },
+                                "integrate_sponsorblock": {
+                                    "type" : "boolean"
                                 }
                             }
                         }
@@ -210,6 +216,19 @@
                         "url": {
                             "type": "keyword",
                             "index": false
+                        }
+                    }
+                },
+                "sponsorblock": {
+                    "properties": {
+                        "last_refresh": {
+                            "type": "date"
+                        },
+                        "has_unlocked": {
+                            "type": "boolean"
+                        },
+                        "is_enabled": {
+                            "type": "boolean"
                         }
                     }
                 }

@@ -292,6 +292,7 @@ class SponsorBlock:
     def __init__(self, user_id=False):
         self.user_id = user_id
         self.user_agent = f"{settings.TA_UPSTREAM} {settings.TA_VERSION}"
+        self.last_refresh = int(datetime.now().strftime("%s"))
 
     def get_sb_id(self):
         """get sponsorblock userid or generate if needed"""
@@ -315,9 +316,35 @@ class SponsorBlock:
         response = requests.get(url, headers=headers)
         if not response.ok:
             print(f"{youtube_id}: sponsorblock failed: {response.text}")
-            return False
+            sponsor_dict = {
+                "last_refresh": self.last_refresh,
+                "is_enabled": True,
+                "segments": [],
+            }
+        else:
+            all_segments = response.json()
+            sponsor_dict = self._get_sponsor_dict(all_segments)
 
-        return response.json()
+        return sponsor_dict
+
+    def _get_sponsor_dict(self, all_segments):
+        """format and process response"""
+        has_unlocked = False
+        cleaned_segments = []
+        for segment in all_segments:
+            if not segment["locked"]:
+                has_unlocked = True
+            del segment["userID"]
+            del segment["description"]
+            cleaned_segments.append(segment)
+
+        sponsor_dict = {
+            "last_refresh": self.last_refresh,
+            "has_unlocked": has_unlocked,
+            "is_enabled": True,
+            "segments": cleaned_segments,
+        }
+        return sponsor_dict
 
     def post_timestamps(self, youtube_id, start_time, end_time):
         """post timestamps to api"""
@@ -358,9 +385,10 @@ class YoutubeVideo(YouTubeItem, YoutubeSubtitle):
     index_name = "ta_video"
     yt_base = "https://www.youtube.com/watch?v="
 
-    def __init__(self, youtube_id):
+    def __init__(self, youtube_id, video_overwrites=False):
         super().__init__(youtube_id)
         self.channel_id = False
+        self.video_overwrites = video_overwrites
         self.es_path = f"{self.index_name}/_doc/{youtube_id}"
 
     def build_json(self):
@@ -377,10 +405,23 @@ class YoutubeVideo(YouTubeItem, YoutubeSubtitle):
         if self.config["downloads"]["integrate_ryd"]:
             self._get_ryd_stats()
 
-        if self.config["downloads"]["integrate_sponsorblock"]:
+        if self._check_get_sb():
             self._get_sponsorblock()
 
         return
+
+    def _check_get_sb(self):
+        """check if need to run sponsor block"""
+        if self.config["downloads"]["integrate_sponsorblock"]:
+            return True
+        try:
+            single_overwrite = self.video_overwrites[self.youtube_id]
+            _ = single_overwrite["integrate_sponsorblock"]
+            return True
+        except KeyError:
+            return False
+
+        return False
 
     def _process_youtube_meta(self):
         """extract relevant fields from youtube"""
@@ -498,7 +539,10 @@ class YoutubeVideo(YouTubeItem, YoutubeSubtitle):
 
         for media_url in to_del:
             file_path = os.path.join(video_base, media_url)
-            os.remove(file_path)
+            try:
+                os.remove(file_path)
+            except FileNotFoundError:
+                print(f"{self.youtube_id}: failed {media_url}, continue.")
 
         self.del_in_es()
         self.delete_subtitles()
@@ -544,9 +588,9 @@ class YoutubeVideo(YouTubeItem, YoutubeSubtitle):
         _, _ = ElasticWrap(path).post(data=data)
 
 
-def index_new_video(youtube_id):
+def index_new_video(youtube_id, video_overwrites=False):
     """combined classes to create new video in index"""
-    video = YoutubeVideo(youtube_id)
+    video = YoutubeVideo(youtube_id, video_overwrites=video_overwrites)
     video.build_json()
     if not video.json_data:
         raise ValueError("failed to get metadata for " + youtube_id)
