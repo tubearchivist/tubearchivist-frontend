@@ -36,8 +36,13 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 const Channel: NextPage = () => {
   const { data: session } = useSession();
   const {
-    data: { data: channels },
-  } = useQuery("channels", () => getChannels(session.ta_token.token));
+    data: channels,
+    error,
+    isLoading,
+  } = useQuery("channels", () => getChannels(session.ta_token.token), {
+    enabled: !!session?.ta_token?.token,
+  });
+
   const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
 
   const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
@@ -104,12 +109,12 @@ const Channel: NextPage = () => {
               />
             </div>
           </div>
-          <h2>Total matching channels: {channels?.length} </h2>
+          <h2>Total matching channels: {channels?.data?.length} </h2>
           <div className={`channel-list ${viewStyle}`}>
-            {!channels ? (
+            {!channels.data ? (
               <h2>No channels found...</h2>
             ) : (
-              channels?.map((channel) => {
+              channels?.data.map((channel) => {
                 return (
                   <div
                     key={channel?.channel_id}

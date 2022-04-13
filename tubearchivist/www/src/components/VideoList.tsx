@@ -14,8 +14,12 @@ export const VideoList = () => {
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<Datum>();
   const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
   const { data: session } = useSession();
-  const { data, error, isLoading } = useQuery("videos", () =>
-    getVideos(session.ta_token.token)
+  const { data, error, isLoading } = useQuery(
+    ["videos", session?.ta_token?.token],
+    () => getVideos(session.ta_token.token),
+    {
+      enabled: !!session?.ta_token?.token,
+    }
   );
 
   const handleSelectedVideo = (video: Datum) => {

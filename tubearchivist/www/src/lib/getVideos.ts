@@ -22,5 +22,3 @@ export const getVideos = async (token: string): Promise<Videos> => {
 
   return response.json();
 };
-
-// b4d4330462c7fc16c51873e45579b29a1a12fc90
