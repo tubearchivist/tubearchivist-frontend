@@ -1,15 +1,19 @@
 import { Channel } from "../types/channel";
 
-export const getChannels = async (): Promise<Channel> => {
-  return await fetch(
+export const getChannels = async (token: string): Promise<Channel> => {
+  const response = await fetch(
     `${process.env.NEXT_PUBLIC_TUBEARCHIVIST_URL}/api/channel/`,
     {
       headers: {
         Accept: "application/json",
         "Content-Type": "application/json",
-        Authorization: `Token b4d4330462c7fc16c51873e45579b29a1a12fc90`,
+        Authorization: `Token ${token}`,
         mode: "no-cors",
       },
     }
-  ).then((res) => res.json());
+  );
+  if (!response.ok) {
+    throw new Error("Error getting channel information");
+  }
+  return response.json();
 };

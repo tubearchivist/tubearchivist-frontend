@@ -1,18 +1,22 @@
+import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { useState } from "react";
-import ReactPlayer from "react-player/file";
 import { useQuery } from "react-query";
-import IconClose from "../images/icon-close.svg";
 import IconPlay from "../images/icon-play.svg";
 import { TA_BASE_URL } from "../lib/constants";
 import { getVideos } from "../lib/getVideos";
-import { formatNumbers } from "../lib/utils";
-import { Datum, Videos } from "../types/video";
+import type { Datum } from "../types/video";
+import { VideoPlayer } from "./VideoPlayer";
+
+type ViewStyle = "grid" | "list";
 
 export const VideoList = () => {
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<Datum>();
-  const { data: queryData } = useQuery("videos", getVideos);
-  const { data: videos } = queryData;
+  const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
+  const { data: session } = useSession();
+  const { data, error, isLoading } = useQuery("videos", () =>
+    getVideos(session.ta_token.token)
+  );
 
   const handleSelectedVideo = (video: Datum) => {
     setSelectedVideoUrl(video);
@@ -22,12 +26,16 @@ export const VideoList = () => {
     setSelectedVideoUrl(undefined);
   };
 
-  if (!videos) {
+  const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
+    setViewStyle(selectedViewStyle);
+  };
+
+  if (!isLoading && !data?.data) {
     return (
       <div className="boxed-content">
         <h2>No videos found...</h2>
         <p>
-          If you`&apos;`ve already added a channel or playlist, try going to the{" "}
+          If you&apos;ve already added a channel or playlist, try going to the{" "}
           <a href="{% url 'downloads">downloads page</a> to start the scan and
           download tasks.
         </p>
@@ -37,63 +45,10 @@ export const VideoList = () => {
 
   return (
     <>
-      {selectedVideoUrl && (
-        <>
-          <div className="player-wrapper">
-            <div className="video-player">
-              <ReactPlayer
-                controls={true}
-                width="100%"
-                height="100%"
-                light="false"
-                playing // TODO: Not currently working
-                playsinline
-                url={`${process.env.NEXT_PUBLIC_TUBEARCHIVIST_URL}/media/${selectedVideoUrl.media_url}`}
-              />
-              <div className="player-title boxed-content">
-                <NextImage
-                  className="close-button"
-                  src={IconClose}
-                  width={30}
-                  height={30}
-                  alt="close-icon"
-                  onClick={handleRemoveVideoPlayer}
-                  title="Close player"
-                />
-                {/* ${watchStatusIndicator}
-            ${castButton}
-             */}
-                <div className="thumb-icon player-stats">
-                  <img src="/img/icon-eye.svg" alt="views icon" />
-                  <span>
-                    {formatNumbers(
-                      selectedVideoUrl.stats.view_count.toString()
-                    )}
-                  </span>
-                  <span>|</span>
-                  <img src="/img/icon-thumb.svg" alt="thumbs-up" />
-                  <span>
-                    {formatNumbers(
-                      selectedVideoUrl.stats.like_count.toString()
-                    )}
-                  </span>
-                </div>
-                <div className="player-channel-playlist">
-                  <h3>
-                    <a href="/channel/${channelId}/">
-                      {selectedVideoUrl.channel.channel_name}
-                    </a>
-                  </h3>
-                  {/* ${playlist} */}
-                </div>
-                <a href="/video/${videoId}/">
-                  <h2 id="video-title">{selectedVideoUrl.title}</h2>
-                </a>
-              </div>
-            </div>
-          </div>
-        </>
-      )}
+      <VideoPlayer
+        handleRemoveVideoPlayer={handleRemoveVideoPlayer}
+        selectedVideoUrl={selectedVideoUrl}
+      />
 
       <div className="boxed-content">
         <div className="title-bar">
@@ -151,25 +106,24 @@ export const VideoList = () => {
             />
             <img
               src="/img/icon-gridview.svg"
-              onClick={() => console.log("grid view")}
-              data-origin="home"
-              data-value="grid"
+              onClick={() => handleSetViewstyle("grid")}
               alt="grid view"
             />
             <img
               src="/img/icon-listview.svg"
-              onClick={() => console.log("list view")}
-              data-origin="home"
-              data-value="list"
+              onClick={() => handleSetViewstyle("list")}
               alt="list view"
             />
           </div>
         </div>
-        <div className="video-list list">
-          {videos &&
-            videos?.map((video) => {
+        <div className={`video-list ${viewStyle}`}>
+          {data &&
+            data.data?.map((video) => {
               return (
-                <div key={video.youtube_id} className="video-item list">
+                <div
+                  key={video.youtube_id}
+                  className={`video-item ${viewStyle}`}
+                >
                   <a
                     style={{ cursor: "pointer" }}
                     onClick={() => handleSelectedVideo(video)}

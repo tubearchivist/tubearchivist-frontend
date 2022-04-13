@@ -1,16 +1,49 @@
-import { GetServerSideProps, NextPage } from "next";
+import type { GetServerSideProps, NextPage } from "next";
+import { getSession, useSession } from "next-auth/react";
+import { useState } from "react";
+import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import { TA_BASE_URL } from "../lib/constants";
 import { getChannels } from "../lib/getChannels";
-import { Channel } from "../types/channel";
 
-export const getServerSideProps: GetServerSideProps = async () => {
-  const channels = await getChannels();
-  return { props: { channels } };
+type ViewStyle = "grid" | "list";
+
+export const getServerSideProps: GetServerSideProps = async (context) => {
+  const queryClient = new QueryClient();
+  const session = await getSession(context);
+
+  if (!session) {
+    return {
+      redirect: {
+        destination: "/auth/login",
+        permanent: false,
+      },
+    };
+  }
+
+  await queryClient.prefetchQuery("channels", () =>
+    getChannels(session.ta_token.token)
+  );
+
+  return {
+    props: {
+      dehydratedState: dehydrate(queryClient),
+    },
+  };
 };
 
-const Channel: NextPage<{ channels: Channel }> = ({ channels }) => {
+const Channel: NextPage = () => {
+  const { data: session } = useSession();
+  const {
+    data: { data: channels },
+  } = useQuery("channels", () => getChannels(session.ta_token.token));
+  const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
+
+  const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
+    setViewStyle(selectedViewStyle);
+  };
+
   return (
     <>
       <CustomHead title="Channels" />
@@ -46,7 +79,6 @@ const Channel: NextPage<{ channels: Channel }> = ({ channels }) => {
                   id="show_subed_only"
                   onClick={() => console.log("toggleCheckbox(this)")}
                   type="checkbox"
-                  checked
                 />
                 {/* {% if not show_subed_only %} */}
                 <label htmlFor="" className="ofbtn">
@@ -62,29 +94,28 @@ const Channel: NextPage<{ channels: Channel }> = ({ channels }) => {
             <div className="view-icons">
               <img
                 src="/img/icon-gridview.svg"
-                onClick={() => console.log("changeView(this)")}
-                data-origin="channel"
-                data-value="grid"
+                onClick={() => handleSetViewstyle("grid")}
                 alt="grid view"
               />
               <img
                 src="/img/icon-listview.svg"
-                onClick={() => console.log("changeView(this)")}
-                data-origin="channel"
-                data-value="list"
+                onClick={() => handleSetViewstyle("list")}
                 alt="list view"
               />
             </div>
           </div>
-          <h2>Total matching channels: {channels?.data?.length} </h2>
-          <div className="channel-list list">
-            {/* {% if results %}
-            {% for channel in results %} */}
-            {channels &&
-              channels?.data?.map((channel) => {
+          <h2>Total matching channels: {channels?.length} </h2>
+          <div className={`channel-list ${viewStyle}`}>
+            {!channels ? (
+              <h2>No channels found...</h2>
+            ) : (
+              channels?.map((channel) => {
                 return (
-                  <div key={channel?.channel_id} className="channel-item list">
-                    <div className="channel-banner list">
+                  <div
+                    key={channel?.channel_id}
+                    className={`channel-item ${viewStyle}`}
+                  >
+                    <div className={`channel-banner ${viewStyle}`}>
                       <a href="{% url 'channel_id' channel.source.channel_id %}">
                         <img
                           src={`${TA_BASE_URL}${channel?.channel_banner_url}`}
@@ -92,7 +123,7 @@ const Channel: NextPage<{ channels: Channel }> = ({ channels }) => {
                         />
                       </a>
                     </div>
-                    <div className="info-box info-box-2 list">
+                    <div className={`info-box info-box-2 ${viewStyle}`}>
                       <div className="info-box-item">
                         <div className="round-img">
                           <a href="{% url 'channel_id' channel.source.channel_id %}">
@@ -144,7 +175,8 @@ const Channel: NextPage<{ channels: Channel }> = ({ channels }) => {
                     </div>
                   </div>
                 );
-              })}
+              })
+            )}
             {/* {% endfor %}
         {% else %} */}
             {/* <h2>No channels found...</h2> */}

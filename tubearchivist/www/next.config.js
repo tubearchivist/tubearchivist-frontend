@@ -1,5 +1,3 @@
-const { withPlaiceholder } = require("@plaiceholder/next");
-
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   images: {
@@ -8,4 +6,4 @@ const nextConfig = {
   reactStrictMode: true,
 };
 
-module.exports = withPlaiceholder(nextConfig);
+module.exports = nextConfig;
