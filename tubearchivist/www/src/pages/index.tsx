@@ -38,13 +38,14 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  await queryClient.prefetchQuery("videos", () =>
+  await queryClient.prefetchQuery(["videos", session.ta_token.token], () =>
     getVideos(session.ta_token.token)
   );
 
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
+      session,
     },
   };
 };

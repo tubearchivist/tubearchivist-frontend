@@ -1,5 +1,6 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
+import { TA_BASE_URL } from "../../../lib/constants";
 
 type TA_Token = {
   token: string;
@@ -29,17 +30,14 @@ export default NextAuth({
           password: credentials.password,
         };
 
-        const res = await fetch(
-          `${process.env.NEXT_PUBLIC_TUBEARCHIVIST_URL}/api/login/`,
-          {
-            method: "POST",
-            body: JSON.stringify(payload),
-            headers: {
-              "Content-Type": "application/json",
-              "Accept-Language": "en-US",
-            },
-          }
-        );
+        const res = await fetch(`${TA_BASE_URL}/api/login/`, {
+          method: "POST",
+          body: JSON.stringify(payload),
+          headers: {
+            "Content-Type": "application/json",
+            "Accept-Language": "en-US",
+          },
+        });
 
         const ta_token: TA_Token = await res.json();
         // If no error and we have user data, return it

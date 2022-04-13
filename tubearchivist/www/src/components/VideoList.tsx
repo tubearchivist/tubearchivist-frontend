@@ -122,7 +122,7 @@ export const VideoList = () => {
         </div>
         <div className={`video-list ${viewStyle}`}>
           {data &&
-            data.data?.map((video) => {
+            data?.data?.map((video) => {
               return (
                 <div
                   key={video.youtube_id}
@@ -134,11 +134,11 @@ export const VideoList = () => {
                   >
                     <div className="video-thumb-wrap list">
                       <div className="video-thumb">
-                        <NextImage
+                        <img
                           src={`${TA_BASE_URL}/cache/${video.vid_thumb_url}`}
                           alt="video-thumb"
-                          width={250}
-                          height={145}
+                          // width={250}
+                          // height={145}
                           // blurDataURL={placeholder}
                           // placeholder="blur"
                         />
@@ -171,7 +171,7 @@ export const VideoList = () => {
                       className="video-desc-player"
                       id={`video-info-${video.youtube_id}`}
                     >
-                      {video.player.watched ? (
+                      {video?.player?.watched ? (
                         <img
                           src="/img/icon-seen.svg"
                           alt="seen-icon"

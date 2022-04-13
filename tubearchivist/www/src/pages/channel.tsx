@@ -29,6 +29,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
+      session,
     },
   };
 };
@@ -114,7 +115,7 @@ const Channel: NextPage = () => {
             {!channels.data ? (
               <h2>No channels found...</h2>
             ) : (
-              channels?.data.map((channel) => {
+              channels?.data?.map((channel) => {
                 return (
                   <div
                     key={channel?.channel_id}

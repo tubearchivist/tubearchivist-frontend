@@ -33,6 +33,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
   return {
     props: {
       dehydratedState: dehydrate(queryClient),
+      session,
     },
   };
 };
@@ -41,7 +42,11 @@ const Playlist = () => {
   const { data: session } = useSession();
   const {
     data: { data: playlists },
-  } = useQuery("playlists", () => getPlaylists(session.ta_token.token));
+    error,
+    isLoading,
+  } = useQuery("playlists", () => getPlaylists(session.ta_token.token), {
+    enabled: !!session.ta_token.token,
+  });
 
   const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
 
@@ -119,7 +124,7 @@ const Playlist = () => {
         <div className={`playlist-list ${viewStyle}`}>
           {/* {% if results %}
             {% for playlist in results %} */}
-          {!playlists ? (
+          {!isLoading && !playlists ? (
             <h2>No playlists found...</h2>
           ) : (
             playlists?.map((playlist) => {
