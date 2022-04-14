@@ -1,10 +1,10 @@
 import NextImage from "next/image";
 import ReactPlayer from "react-player";
-import IconClose from "../images/icon-close.svg";
-import { TA_BASE_URL } from "../lib/constants";
-import { formatNumbers } from "../lib/utils";
+import { TA_BASE_URL } from "../../lib/constants";
+import { formatNumbers } from "../../lib/utils";
+import IconClose from "../../images/icon-close.svg";
 
-export const VideoPlayer = ({ selectedVideoUrl, handleRemoveVideoPlayer }) => {
+const VideoPlayer = ({ selectedVideoUrl, handleRemoveVideoPlayer }) => {
   if (!selectedVideoUrl) return;
   return (
     <>
@@ -62,3 +62,5 @@ export const VideoPlayer = ({ selectedVideoUrl, handleRemoveVideoPlayer }) => {
     </>
   );
 };
+
+export default VideoPlayer;

@@ -2,20 +2,20 @@ import { useSession } from "next-auth/react";
 import NextImage from "next/image";
 import { useState } from "react";
 import { useQuery } from "react-query";
-import IconPlay from "../images/icon-play.svg";
-import { TA_BASE_URL } from "../lib/constants";
-import { getVideos } from "../lib/getVideos";
-import type { Datum } from "../types/video";
-import { VideoPlayer } from "./VideoPlayer";
+import IconPlay from "../../images/icon-play.svg";
+import { TA_BASE_URL } from "../../lib/constants";
+import { getVideos } from "../../lib/getVideos";
+import type { Datum } from "../../types/video";
+import VideoPlayer from "../VideoPlayer";
 
 type ViewStyle = "grid" | "list";
 
-export const VideoList = () => {
+const VideoList = () => {
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<Datum>();
   const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
   const { data: session } = useSession();
   const { data, error, isLoading } = useQuery(
-    ["videos", session?.ta_token?.token],
+    ["videos", session.ta_token.token],
     () => getVideos(session.ta_token.token),
     {
       enabled: !!session?.ta_token?.token,
@@ -134,13 +134,13 @@ export const VideoList = () => {
                   >
                     <div className="video-thumb-wrap list">
                       <div className="video-thumb">
-                        <img
+                        <NextImage
                           src={`${TA_BASE_URL}/cache/${video.vid_thumb_url}`}
                           alt="video-thumb"
-                          // width={250}
-                          // height={145}
-                          // blurDataURL={placeholder}
-                          // placeholder="blur"
+                          width={325}
+                          height={190}
+                          blurDataURL={video.vid_thumb_base64}
+                          placeholder="blur"
                         />
                         {/* {% if video.source.player.progress %} */}
                         <div
@@ -217,3 +217,5 @@ export const VideoList = () => {
     </>
   );
 };
+
+export default VideoList;

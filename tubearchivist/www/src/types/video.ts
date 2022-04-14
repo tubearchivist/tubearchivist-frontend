@@ -53,6 +53,7 @@ export interface Downloads {
   subtitle_index: boolean;
   throttledratelimit: boolean;
   integrate_ryd: boolean;
+  integrate_sponsorblock: boolean;
 }
 
 export interface Scheduler {
@@ -79,39 +80,69 @@ export interface Subscriptions {
 
 export interface Datum {
   active: boolean;
-  category: string[];
+  category: Category[];
   channel: Channel;
   date_downloaded: number;
   description: string;
   media_url: string;
   player: Player;
+  playlist: Playlist[];
   published: string;
   stats: Stats;
   tags: string[];
   title: string;
-  vid_last_refresh: string;
+  vid_last_refresh: LastRefresh;
+  vid_thumb_base64: string;
   vid_thumb_url: string;
   youtube_id: string;
 }
 
+export enum Category {
+  ScienceTechnology = "Science & Technology",
+}
+
 export interface Channel {
   channel_active: boolean;
-  channel_banner_url: string;
+  channel_banner_url: ChannelBannerURL;
   channel_description: string;
-  channel_id: string;
-  channel_last_refresh: string;
-  channel_name: string;
+  channel_id: ChannelID;
+  channel_last_refresh: LastRefresh;
+  channel_name: ChannelName;
   channel_subs: number;
   channel_subscribed: boolean;
-  channel_thumb_url: string;
+  channel_thumb_url: ChannelThumbURL;
   channel_tvart_url: boolean;
   channel_views: number;
+}
+
+export enum ChannelBannerURL {
+  CacheChannelsUCFhXFikryT4AFcLkLw2LBLABannerJpg = "/cache/channels/UCFhXFikryT4aFcLkLw2LBLA_banner.jpg",
+}
+
+export enum ChannelID {
+  UCFhXFikryT4AFcLkLw2LBLA = "UCFhXFikryT4aFcLkLw2LBLA",
+}
+
+export enum LastRefresh {
+  The05APR2022 = "05 Apr, 2022",
+}
+
+export enum ChannelName {
+  NileRed = "NileRed",
+}
+
+export enum ChannelThumbURL {
+  CacheChannelsUCFhXFikryT4AFcLkLw2LBLAThumbJpg = "/cache/channels/UCFhXFikryT4aFcLkLw2LBLA_thumb.jpg",
 }
 
 export interface Player {
   watched: boolean;
   duration: number;
   duration_str: string;
+}
+
+export enum Playlist {
+  PLbaramj7Nly5K5AsvQoI9PJQhy47PfDAF = "PLbaramj7Nly5K5AsvQoI9PJQhy47pfDAf",
 }
 
 export interface Stats {

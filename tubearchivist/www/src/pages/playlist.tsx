@@ -26,7 +26,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  await queryClient.prefetchQuery("playlists", () =>
+  await queryClient.prefetchQuery(["playlists", session.ta_token.token], () =>
     getPlaylists(session.ta_token.token)
   );
 
@@ -44,9 +44,13 @@ const Playlist = () => {
     data: { data: playlists },
     error,
     isLoading,
-  } = useQuery("playlists", () => getPlaylists(session.ta_token.token), {
-    enabled: !!session.ta_token.token,
-  });
+  } = useQuery(
+    ["playlists", session.ta_token.token],
+    () => getPlaylists(session.ta_token.token),
+    {
+      enabled: !!session.ta_token.token,
+    }
+  );
 
   const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
 

@@ -9,6 +9,14 @@ import { signIn, signOut, useSession } from "next-auth/react";
 /** TODO: Fix these nav links */
 export const Nav = () => {
   const { data: session } = useSession();
+
+  const handleSigninSignout = () => {
+    if (!session) {
+      signIn();
+    }
+    signOut();
+  };
+
   return (
     <div className="boxed-content">
       <div className="top-banner">
@@ -40,9 +48,11 @@ export const Nav = () => {
               <div className="nav-item">channels</div>
             </a>
           </NextLink>
-          <a href="/playlist">
-            <div className="nav-item">playlists</div>
-          </a>
+          <NextLink href="/playlist">
+            <a>
+              <div className="nav-item">playlists</div>
+            </a>
+          </NextLink>
           <a href="/downloads">
             <div className="nav-item">downloads</div>
           </a>
@@ -66,10 +76,7 @@ export const Nav = () => {
               title="Settings"
             />
           </a>
-          <a
-            style={{ cursor: "pointer" }}
-            onClick={!!session?.user ? () => signOut() : () => signIn()}
-          >
+          <a style={{ cursor: "pointer" }} onClick={handleSigninSignout}>
             <NextImage
               width={50}
               height={40}

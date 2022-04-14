@@ -22,7 +22,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     };
   }
 
-  await queryClient.prefetchQuery("channels", () =>
+  await queryClient.prefetchQuery(["channels", session.ta_token.token], () =>
     getChannels(session.ta_token.token)
   );
 
@@ -40,9 +40,13 @@ const Channel: NextPage = () => {
     data: channels,
     error,
     isLoading,
-  } = useQuery("channels", () => getChannels(session.ta_token.token), {
-    enabled: !!session?.ta_token?.token,
-  });
+  } = useQuery(
+    ["channels", session.ta_token.token],
+    () => getChannels(session.ta_token.token),
+    {
+      enabled: !!session?.ta_token?.token,
+    }
+  );
 
   const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
 

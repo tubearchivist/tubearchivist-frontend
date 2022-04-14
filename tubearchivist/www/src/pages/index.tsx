@@ -3,15 +3,10 @@ import { getSession } from "next-auth/react";
 import { dehydrate, QueryClient } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
-import { VideoList } from "../components/VideoList";
+import VideoList from "../components/VideoList/";
 import { getVideos } from "../lib/getVideos";
-import type { Videos } from "../types/video";
 
-type HomeProps = {
-  videos: Videos;
-};
-
-const Home: NextPage<HomeProps> = () => {
+const Home: NextPage = () => {
   return (
     <>
       <CustomHead />
