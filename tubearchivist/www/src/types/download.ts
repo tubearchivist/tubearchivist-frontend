@@ -36,7 +36,7 @@ export interface Archive {
 export interface DefaultView {
   home: string;
   channel: string;
-  downloads: string;
+  downloads: "grid" | "list";
   playlist: string;
 }
 

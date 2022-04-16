@@ -56,7 +56,7 @@ const Download: NextPage = () => {
         }
     );
 
-    const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
+    const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
     const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
 
     const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
