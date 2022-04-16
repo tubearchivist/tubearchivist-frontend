@@ -53,9 +53,11 @@ export const Nav = () => {
               <div className="nav-item">playlists</div>
             </a>
           </NextLink>
-          <a href="/downloads">
-            <div className="nav-item">downloads</div>
-          </a>
+          <NextLink href="/download">
+            <a>
+              <div className="nav-item">downloads</div>
+            </a>
+          </NextLink>
         </div>
         <div className="nav-icons">
           <a href="/search">
