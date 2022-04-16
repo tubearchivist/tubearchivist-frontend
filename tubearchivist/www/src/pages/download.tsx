@@ -4,6 +4,12 @@ import { useState } from "react";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
+import NextImage from "next/image";
+import RescanIcon from "../images/icon-rescan.svg";
+import DownloadIcon from "../images/icon-download.svg";
+import AddIcon from "../images/icon-add.svg";
+import GridViewIcon from "../images/icon-gridview.svg";
+import ListViewIcon from "../images/icon-listview.svg";
 
 type ViewStyle = "grid" | "list";
 
@@ -49,34 +55,37 @@ const Download: NextPage = () => {
                     <div id="downloadControl"></div>
                     <div className="info-box info-box-3">
                         <div className="icon-text">
-                            <img
-                                id="rescan-icon"
-                                onClick={() => console.log("rescanPending()")}
-                                src="/img/icon-rescan.svg"
+                            <NextImage
+                                width={80}
+                                height={80}
+                                src={RescanIcon}
                                 alt="rescan-icon"
                                 title="Rescan subscriptions"
+                                onClick={() => console.log("rescanPending()")}
                             />
                             {/* <img id="rescan-icon" onclick="rescanPending()" src="{% static 'img/icon-rescan.svg' %}" alt="rescan-icon"></img> */}
                             <p>Rescan subscriptions</p>
                         </div>
                         <div className="icon-text">
-                            <img
-                                id="download-icon"
-                                onClick={() => console.log("dlPending()")}
-                                src="/img/icon-download.svg"
+                            <NextImage
+                                width={80}
+                                height={80}
+                                src={DownloadIcon}
                                 alt="download-icon"
                                 title="Start download"
+                                onClick={() => console.log("dlPending()")}
                             />
                             {/* <img id="download-icon" onclick="dlPending()" src="{% static 'img/icon-download.svg' %}" alt="download-icon"></img> */}
                             <p>Start download</p>
                         </div>
                         <div className="icon-text">
-                            <img
-                                id="animate-icon"
-                                onClick={() => console.log("showForm()")}
-                                src="/img/icon-add.svg"
+                            <NextImage
+                                width={80}
+                                height={80}
+                                src={AddIcon}
                                 alt="add-icon"
                                 title="Add to download queue"
+                                onClick={() => console.log("showForm()")}
                             />
                             <p>Add to download queue</p>
                             <div className="show-form">
@@ -109,16 +118,22 @@ const Download: NextPage = () => {
                             </div>
                         </div>
                         <div className="view-icons">
-                            <img
-                                src="/img/icon-gridview.svg"
-                                onClick={() => handleSetViewstyle("grid")}
+                            <NextImage
+                                width={30}
+                                height={44}
+                                src={GridViewIcon}
                                 alt="grid view"
+                                title="Switch to grid view"
+                                onClick={() => handleSetViewstyle("grid")}
                             />
                             {/* <img src="{% static 'img/icon-gridview.svg' %}" onclick="changeView(this)" data-origin="downloads" data-value="grid" alt="grid view"> */}
-                            <img
-                                src="/img/icon-listview.svg"
-                                onClick={() => handleSetViewstyle("list")}
+                            <NextImage
+                                width={30}
+                                height={44}
+                                src={ListViewIcon}
                                 alt="list view"
+                                title="Switch to list view"
+                                onClick={() => handleSetViewstyle("list")}
                             />
                             {/* <img src="{% static 'img/icon-listview.svg' %}" onclick="changeView(this)" data-origin="downloads" data-value="list" alt="list view"> */}
                         </div>
