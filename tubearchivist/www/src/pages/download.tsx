@@ -7,6 +7,7 @@ import { Layout } from "../components/Layout";
 import NextImage from "next/image";
 import { TA_BASE_URL } from "../lib/constants";
 import { getDownloads } from "../lib/getDownloads";
+import { sendDownloads } from "../lib/getDownloads";
 import RescanIcon from "../images/icon-rescan.svg";
 import DownloadIcon from "../images/icon-download.svg";
 import AddIcon from "../images/icon-add.svg";
@@ -16,6 +17,8 @@ import ListViewIcon from "../images/icon-listview.svg";
 
 type ViewStyle = "grid" | "list";
 type IgnoredStatus = boolean;
+type FormHidden = boolean;
+
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const queryClient = new QueryClient();
@@ -58,6 +61,7 @@ const Download: NextPage = () => {
 
     const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
     const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
+    const [formHidden, setFormHidden] = useState<FormHidden>(true);
 
     const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
         setViewStyle(selectedViewStyle);
@@ -66,6 +70,16 @@ const Download: NextPage = () => {
     const handleSetIgnoredStatus = (selectedIgnoredStatus: IgnoredStatus) => {
         setIgnoredStatus(selectedIgnoredStatus);
     };
+
+    const handleSetFormHidden = (selectedFormHidden: FormHidden) => {
+        setFormHidden(selectedFormHidden);
+    };
+
+    const addToDownloadQueue = event => {
+        event.preventDefault();
+        sendDownloads(session.ta_token.token, event.target.vid_url.value);
+        handleSetFormHidden(true);
+    }
 
     return (
         <>
@@ -110,16 +124,17 @@ const Download: NextPage = () => {
                                 src={AddIcon}
                                 alt="add-icon"
                                 title="Add to download queue"
-                                onClick={() => console.log("showForm()")}
+                                onClick={() => formHidden ? handleSetFormHidden(false) : handleSetFormHidden(true)}
                             />
                             <p>Add to download queue</p>
-                            <div className="show-form">
-                                <form id="hidden-form" action="/downloads/" method="post">
-                                {/* {% csrf_token %}
-                                    {{ subscribe_form }} */}
-                                <button type="submit">Add to download queue</button>
-                                </form>
-                            </div>
+                            {!formHidden &&
+                                <div className="show-form">
+                                    <form id="hidden-form" onSubmit={addToDownloadQueue}>
+                                        <textarea name="vid_url" cols={40} rows={4} placeholder="Enter Video Urls or IDs here..." required id="id_vid_url" spellCheck="false" />
+                                        <button type="submit">Add to download queue</button>
+                                    </form>
+                                </div>
+                            }
                         </div>
                     </div>
                     <div className="view-controls">
@@ -185,11 +200,11 @@ const Download: NextPage = () => {
                             </div>
                         }
                     <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
-                    <div className={`dl-list  ${viewStyle}`}>
+                    <div className={`dl-list ${viewStyle}`}>
                         {downloads.data &&
-                            downloads?.data?.map((video) => {
+                            downloads?.data?.map((video,i) => {
                                 return (
-                                    <div key={video?.youtube_id} className={`dl-item ${viewStyle}`} >
+                                    <div key={i} className={`dl-item ${viewStyle}`}>
                                         <div className={`dl-thumb ${viewStyle}`}>
                                             <img src={`${TA_BASE_URL}${video?.vid_thumb_url}`} alt="video_thumb"></img>
                                             {ignoredStatus && <span>ignored</span>}
@@ -201,11 +216,11 @@ const Download: NextPage = () => {
                                             {/* {% endif %} */}
                                         </div>
                                         <div className={`dl-desc ${viewStyle}`}>
-                                            <h3>{video?.title}Video Title</h3>
-                                            {video?.channel?.channel_indexed && <a href={`/channel/${video?.channel?.channel_id}`}>{video?.channel?.channel_name} Channel Name Link</a>}
+                                            <h3>{video?.title}</h3>
+                                            {video?.channel?.channel_indexed && <a href={`/channel/${video?.channel?.channel_id}`}>{video?.channel?.channel_name}</a>}
                                             {/* {% if video.source.channel_indexed %} */}
                                                 {/* <a href="{% url 'channel_id' video.source.channel_id %}">{{ video.source.channel_name }}</a> */}
-                                            {!video?.channel?.channel_indexed && <span>{video?.channel?.channel_name} Channel Name No Link</span>}
+                                            {!video?.channel?.channel_indexed && <span>{video?.channel?.channel_name}</span>}
                                             {/* {% else %} */}
                                                 {/* <span>{{ video.source.channel_name }}</span> */}
                                             {/* {% endif %} */}

@@ -4,6 +4,12 @@ export interface Download {
   paginate: boolean;
 }
 
+export interface DownloadResponse {
+  data: Datum[];
+  message: string;
+
+}
+
 export interface Config {
   archive: Archive;
   default_view: DefaultView;
@@ -95,6 +101,7 @@ export interface Datum {
   vid_thumb_base64: string;
   vid_thumb_url: string;
   youtube_id: string;
+  status: "pending";
 }
 
 export enum Category {
