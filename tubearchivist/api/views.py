@@ -52,7 +52,10 @@ class ApiBaseView(APIView):
         print(self.search_base)
         response, status_code = ElasticWrap(self.search_base).get(data=data)
         self.response["data"] = SearchProcess(response).process()
-        self.status_code = status_code
+        if self.response["data"]:
+            self.status_code = status_code
+        else:
+            self.status_code = 404
 
 
 class VideoApiView(ApiBaseView):
@@ -222,17 +225,22 @@ class ChannelApiListView(ApiBaseView):
         return Response(data)
 
 
-class PlaylistApiView(ApiBaseView):
-    """resolves to /api/playlist/<playlist_id>/
-    GET: returns metadata dict of playlist
+class ChannelApiVideoView(ApiBaseView):
+    """resolves to /api/channel/<channel-id>/video
+    GET: returns a list of videos of channel
     """
 
-    search_base = "ta_playlist/_doc/"
+    search_base = "ta_video/_search/"
 
-    def get(self, request, playlist_id):
+    def get(self, request, channel_id):
         # pylint: disable=unused-argument
-        """get request"""
-        self.get_document(playlist_id)
+        """handle get request"""
+        data = {
+            "query": {"term": {"channel.channel_id": {"value": channel_id}}}
+        }
+        self.get_document_list(data)
+        self.get_paginate()
+
         return Response(self.response, status=self.status_code)
 
 
@@ -250,6 +258,38 @@ class PlaylistApiListView(ApiBaseView):
         self.get_document_list(data)
         self.get_paginate()
         return Response(self.response)
+
+
+class PlaylistApiView(ApiBaseView):
+    """resolves to /api/playlist/<playlist_id>/
+    GET: returns metadata dict of playlist
+    """
+
+    search_base = "ta_playlist/_doc/"
+
+    def get(self, request, playlist_id):
+        # pylint: disable=unused-argument
+        """get request"""
+        self.get_document(playlist_id)
+        return Response(self.response, status=self.status_code)
+
+
+class PlaylistApiVideoView(ApiBaseView):
+    """resolves to /api/playlist/<playlist_id>/video
+    GET: returns list of videos in playlist
+    """
+
+    search_base = "ta_video/_search/"
+
+    def get(self, request, playlist_id):
+        # pylint: disable=unused-argument
+        """handle get request"""
+        data = {
+            "query": {"term": {"playlist.keyword": {"value": playlist_id}}}
+        }
+        self.get_document_list(data)
+        self.get_paginate()
+        return Response(self.response, status=self.status_code)
 
 
 class DownloadApiView(ApiBaseView):
