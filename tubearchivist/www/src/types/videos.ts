@@ -1,6 +1,7 @@
-export interface Video {
-  data?: Data;
+export interface Videos {
+  data?: Datum[];
   config?: Config;
+  paginate?: boolean;
 }
 
 export interface Config {
@@ -77,43 +78,71 @@ export interface Subscriptions {
   channel_size?: number;
 }
 
-export interface Data {
+export interface Datum {
   active?: boolean;
-  category?: string[];
+  category?: Category[];
   channel?: Channel;
   date_downloaded?: number;
   description?: string;
   media_url?: string;
   player?: Player;
-  playlist?: string[];
+  playlist?: Playlist[];
   published?: string;
   stats?: Stats;
   tags?: string[];
   title?: string;
-  vid_last_refresh?: string;
+  vid_last_refresh?: LastRefresh;
   vid_thumb_base64?: string;
   vid_thumb_url?: string;
   youtube_id?: string;
 }
 
+export enum Category {
+  Comedy = "Comedy",
+}
+
 export interface Channel {
   channel_active?: boolean;
-  channel_banner_url?: string;
+  channel_banner_url?: ChannelBannerURL;
   channel_description?: string;
-  channel_id?: string;
-  channel_last_refresh?: string;
-  channel_name?: string;
+  channel_id?: ChannelID;
+  channel_last_refresh?: LastRefresh;
+  channel_name?: ChannelName;
   channel_subs?: number;
   channel_subscribed?: boolean;
-  channel_thumb_url?: string;
+  channel_thumb_url?: ChannelThumbURL;
   channel_tvart_url?: boolean;
   channel_views?: number;
+}
+
+export enum ChannelBannerURL {
+  CacheChannelsUCh9IfI45Mmk59EDvSWtuuhQBannerJpg = "/cache/channels/UCh9IfI45mmk59eDvSWtuuhQ_banner.jpg",
+}
+
+export enum ChannelID {
+  UCh9IfI45Mmk59EDvSWtuuhQ = "UCh9IfI45mmk59eDvSWtuuhQ",
+}
+
+export enum LastRefresh {
+  The15APR2022 = "15 Apr, 2022",
+}
+
+export enum ChannelName {
+  RyanGeorge = "Ryan George",
+}
+
+export enum ChannelThumbURL {
+  CacheChannelsUCh9IfI45Mmk59EDvSWtuuhQThumbJpg = "/cache/channels/UCh9IfI45mmk59eDvSWtuuhQ_thumb.jpg",
 }
 
 export interface Player {
   watched?: boolean;
   duration?: number;
   duration_str?: string;
+}
+
+export enum Playlist {
+  PLREUFLEgWzCFru2DUUQoPPzSjcKovP1 = "PLRE-UFLEgWzCFru2DUUQoP_PzSjcKovP1",
 }
 
 export interface Stats {

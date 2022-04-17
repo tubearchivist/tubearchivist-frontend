@@ -50,6 +50,13 @@ h3 {
   color: var(--accent-font-light);
 }
 
+h4 {
+  font-size: 0.7em;
+  margin-bottom: 7px;
+  font-family: Sen-Regular, sans-serif;
+  color: var(--accent-font-light);
+}
+
 p,
 i,
 li {
@@ -345,6 +352,18 @@ button:hover {
   display: grid;
   align-content: space-evenly;
   height: 100vh;
+}
+
+.notifications {
+  text-align: center;
+  width: 80%;
+  margin: auto;
+}
+
+.sponsorblock {
+  text-align: center;
+  width: 80%;
+  margin: auto;
 }
 
 .video-player video,
