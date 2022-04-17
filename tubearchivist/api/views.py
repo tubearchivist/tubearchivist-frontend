@@ -1,11 +1,12 @@
 """all API views"""
 
 from api.src.search_processor import SearchProcess
+from home.src.download.queue import PendingInteract
 from home.src.es.connect import ElasticWrap
 from home.src.index.video import SponsorBlock
 from home.src.ta.config import AppConfig
 from home.src.ta.helper import UrlListParser
-from home.src.ta.ta_redis import RedisArchivist
+from home.src.ta.ta_redis import RedisArchivist, RedisQueue
 from home.tasks import extrac_dl, subscribe_to
 from rest_framework.authentication import (
     SessionAuthentication,
@@ -295,9 +296,12 @@ class PlaylistApiVideoView(ApiBaseView):
 class DownloadApiView(ApiBaseView):
     """resolves to /api/download/<video_id>/
     GET: returns metadata dict of an item in the download queue
+    POST: update status of item to pending or ignore
+    DELETE: forget from download queue
     """
 
     search_base = "ta_download/_doc/"
+    valid_status = ["pending", "ignore"]
 
     def get(self, request, video_id):
         # pylint: disable=unused-argument
@@ -305,19 +309,56 @@ class DownloadApiView(ApiBaseView):
         self.get_document(video_id)
         return Response(self.response, status=self.status_code)
 
+    def post(self, request, video_id):
+        """post to video to change status"""
+        item_status = request.data["status"]
+        if item_status not in self.valid_status:
+            message = f"{video_id}: invalid status {item_status}"
+            print(message)
+            return Response({"message": message}, status=400)
+
+        print(f"{video_id}: change status to {item_status}")
+        PendingInteract(video_id=video_id, status=item_status).update_status()
+        RedisQueue().clear_item(video_id)
+
+        return Response(request.data)
+
+    @staticmethod
+    def delete(request, video_id):
+        # pylint: disable=unused-argument
+        """delete single video from queue"""
+        print(f"{video_id}: delete from queue")
+        PendingInteract(video_id=video_id).delete_item()
+
+        return Response({"success": True})
+
 
 class DownloadApiListView(ApiBaseView):
     """resolves to /api/download/
     GET: returns latest videos in the download queue
     POST: add a list of videos to download queue
+    DELETE: remove items based on query filter
     """
 
     search_base = "ta_download/_search/"
+    valid_filter = ["pending", "ignore"]
 
     def get(self, request):
         # pylint: disable=unused-argument
         """get request"""
-        data = {"query": {"match_all": {}}}
+        query_filter = request.GET.get("filter", False)
+        data = {
+            "query": {"match_all": {}},
+            "sort": [{"timestamp": {"order": "asc"}}],
+        }
+        if query_filter:
+            if query_filter not in self.valid_filter:
+                message = f"invalid url query filder: {query_filter}"
+                print(message)
+                return Response({"message": message}, status=400)
+
+            data["query"] = {"term": {"status": {"value": query_filter}}}
+
         self.get_document_list(data)
         self.get_paginate()
         return Response(self.response)
@@ -346,6 +387,20 @@ class DownloadApiListView(ApiBaseView):
         extrac_dl.delay(youtube_ids)
 
         return Response(data)
+
+    def delete(self, request):
+        """delete download queue"""
+        query_filter = request.GET.get("filter", False)
+        if query_filter not in self.valid_filter:
+            message = f"invalid url query filter: {query_filter}"
+            print(message)
+            return Response({"message": message}, status=400)
+
+        message = f"delete queue by status: {query_filter}"
+        print(message)
+        PendingInteract(status=query_filter).delete_by_status()
+
+        return Response({"message": message})
 
 
 class PingView(ApiBaseView):
