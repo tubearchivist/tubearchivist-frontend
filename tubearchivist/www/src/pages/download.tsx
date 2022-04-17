@@ -59,6 +59,8 @@ const Download: NextPage = () => {
         }
     );
 
+    var count = 0;
+
     const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
     const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
     const [formHidden, setFormHidden] = useState<FormHidden>(true);
@@ -187,24 +189,31 @@ const Download: NextPage = () => {
                             {/* <img src="{% static 'img/icon-listview.svg' %}" onclick="changeView(this)" data-origin="downloads" data-value="list" alt="list view"> */}
                         </div>
                     </div>
-                        {ignoredStatus && 
-                            <div className="title-split">
-                                <h2>Ignored from download</h2>
-                                <button onClick={() => console.log("deleteQueue(this)")} data-id="ignore" title="Delete all previously ignored videos from the queue">Delete all ignored</button>
-                            </div>
+                    {ignoredStatus && 
+                        <div className="title-split">
+                            <h2>Ignored from download</h2>
+                            <button onClick={() => console.log("deleteQueue(this)")} data-id="ignore" title="Delete all previously ignored videos from the queue">Delete all ignored</button>
+                        </div>
+                    }
+                    {!ignoredStatus && 
+                        <div className="title-split">
+                            <h2>Download queue</h2>
+                            <button onClick={() => console.log("deleteQueue(this)")} data-id="pending" title="Delete all pending videos from the queue">Delete all queued</button>
+                        </div>
+                    }
+                    {downloads?.data?.forEach((video) => {
+                        if ((video?.status == "ignore" && ignoredStatus) || (video?.status == "pending" && !ignoredStatus)) {
+                            count++;
                         }
-                        {!ignoredStatus && 
-                            <div className="title-split">
-                                <h2>Download queue</h2>
-                                <button onClick={() => console.log("deleteQueue(this)")} data-id="pending" title="Delete all pending videos from the queue">Delete all queued</button>
-                            </div>
-                        }
-                    <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
+                    })} 
+                    <h3>Total videos: {count} {!count && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
                     <div className={`dl-list ${viewStyle}`}>
                         {downloads.data &&
-                            downloads?.data?.map((video,i) => {
+                            downloads?.data?.map((video) => {
+                                count++;
+                                if ((video?.status == "ignore" && ignoredStatus) || (video?.status == "pending" && !ignoredStatus)) {
                                 return (
-                                    <div key={i} className={`dl-item ${viewStyle}`}>
+                                    <div key={video?.youtube_id} className={`dl-item ${viewStyle}`}>
                                         <div className={`dl-thumb ${viewStyle}`}>
                                             <img src={`${TA_BASE_URL}${video?.vid_thumb_url}`} alt="video_thumb"></img>
                                             {ignoredStatus && <span>ignored</span>}
@@ -217,14 +226,14 @@ const Download: NextPage = () => {
                                         </div>
                                         <div className={`dl-desc ${viewStyle}`}>
                                             <h3>{video?.title}</h3>
-                                            {video?.channel?.channel_indexed && <a href={`/channel/${video?.channel?.channel_id}`}>{video?.channel?.channel_name}</a>}
+                                            {video?.channel_indexed && <a href={`/channel/${video?.channel_id}`}>{video?.channel_name}</a>}
                                             {/* {% if video.source.channel_indexed %} */}
                                                 {/* <a href="{% url 'channel_id' video.source.channel_id %}">{{ video.source.channel_name }}</a> */}
-                                            {!video?.channel?.channel_indexed && <span>{video?.channel?.channel_name}</span>}
+                                            {!video?.channel_indexed && <span>{video?.channel_name}</span>}
                                             {/* {% else %} */}
                                                 {/* <span>{{ video.source.channel_name }}</span> */}
                                             {/* {% endif %} */}
-                                            <p>Published: {video?.published} | Duration: {video?.player?.duration_str} | {video?.youtube_id}</p>
+                                            <p>Published: {video?.published} | Duration: {video?.duration} | {video?.youtube_id}</p>
                                             {/* <p>Published: {{ video.source.published }} | Duration: {{ video.source.duration }} | {{ video.source.youtube_id }}</p> */}
                                             {ignoredStatus &&
                                                 <div>
@@ -248,6 +257,7 @@ const Download: NextPage = () => {
                                         </div>
                                     </div>
                                 );
+                                }
                             })
                         }
                         {/* {% if results %} */}
