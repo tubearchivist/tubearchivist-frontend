@@ -3,15 +3,17 @@ import NextImage from "next/image";
 import { useState } from "react";
 import { useQuery } from "react-query";
 import IconPlay from "../../images/icon-play.svg";
-import { TA_BASE_URL } from "../../lib/constants";
+import { getTAUrl } from "../../lib/constants";
 import { getVideos } from "../../lib/getVideos";
-import type { Datum } from "../../types/video";
+import type { Data } from "../../types/video";
 import VideoPlayer from "../VideoPlayer";
 
 type ViewStyle = "grid" | "list";
 
+const TA_BASE_URL = getTAUrl();
+
 const VideoList = () => {
-  const [selectedVideoUrl, setSelectedVideoUrl] = useState<Datum>();
+  const [selectedVideoUrl, setSelectedVideoUrl] = useState<Data>();
   const [viewStyle, setViewStyle] = useState<ViewStyle>("grid");
   const { data: session } = useSession();
   const { data, error, isLoading } = useQuery(
@@ -22,7 +24,7 @@ const VideoList = () => {
     }
   );
 
-  const handleSelectedVideo = (video: Datum) => {
+  const handleSelectedVideo = (video: Data) => {
     setSelectedVideoUrl(video);
   };
 
@@ -51,7 +53,7 @@ const VideoList = () => {
     <>
       <VideoPlayer
         handleRemoveVideoPlayer={handleRemoveVideoPlayer}
-        selectedVideoUrl={selectedVideoUrl}
+        selectedVideo={selectedVideoUrl}
       />
 
       <div className="boxed-content">
@@ -135,10 +137,10 @@ const VideoList = () => {
                     <div className="video-thumb-wrap list">
                       <div className="video-thumb">
                         <NextImage
-                          src={`${TA_BASE_URL}/cache/${video.vid_thumb_url}`}
+                          src={`${TA_BASE_URL.client}/cache/${video.vid_thumb_url}`}
                           alt="video-thumb"
-                          width={325}
-                          height={190}
+                          width={640}
+                          height={360}
                           blurDataURL={video.vid_thumb_base64}
                           placeholder="blur"
                         />

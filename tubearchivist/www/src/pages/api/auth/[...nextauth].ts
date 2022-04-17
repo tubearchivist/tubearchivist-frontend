@@ -1,6 +1,8 @@
 import NextAuth from "next-auth";
 import CredentialsProvider from "next-auth/providers/credentials";
-import { TA_BASE_URL } from "../../../lib/constants";
+import { getTAUrl } from "../../../lib/constants";
+
+const TA_BASE_URL = getTAUrl();
 
 type TA_Token = {
   token: string;
@@ -30,7 +32,7 @@ export default NextAuth({
           password: credentials.password,
         };
 
-        const res = await fetch(`${TA_BASE_URL}/api/login/`, {
+        const res = await fetch(`${TA_BASE_URL.server}/api/login/`, {
           method: "POST",
           body: JSON.stringify(payload),
           headers: {

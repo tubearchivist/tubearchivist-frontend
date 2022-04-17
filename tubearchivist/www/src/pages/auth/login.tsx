@@ -1,10 +1,9 @@
-import { CustomHead } from "../../components/CustomHead";
-import { Layout } from "../../components/Layout";
-import NextImage from "next/image";
-import Logo from "../../images/logo-tube-archivist-dark.png";
-import { getCsrfToken } from "next-auth/react";
 import { NextPageContext } from "next";
+import { getCsrfToken } from "next-auth/react";
+import NextImage from "next/image";
 import { useRouter } from "next/router";
+import { CustomHead } from "../../components/CustomHead";
+import Logo from "../../images/logo-tube-archivist-dark.png";
 
 export async function getServerSideProps(context: NextPageContext) {
   return {

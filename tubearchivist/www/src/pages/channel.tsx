@@ -4,8 +4,10 @@ import { useState } from "react";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
-import { TA_BASE_URL } from "../lib/constants";
+import { getTAUrl } from "../lib/constants";
 import { getChannels } from "../lib/getChannels";
+
+const TA_BASE_URL = getTAUrl();
 
 type ViewStyle = "grid" | "list";
 
@@ -53,6 +55,23 @@ const Channel: NextPage = () => {
   const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
     setViewStyle(selectedViewStyle);
   };
+
+  if (isLoading) {
+    return (
+      <Layout>
+        <h1>Loading...</h1>
+      </Layout>
+    );
+  }
+
+  if (error) {
+    return (
+      <Layout>
+        <h1>Error</h1>
+        <pre>{JSON.stringify(error, null, 2)}</pre>
+      </Layout>
+    );
+  }
 
   return (
     <>
@@ -128,7 +147,7 @@ const Channel: NextPage = () => {
                     <div className={`channel-banner ${viewStyle}`}>
                       <a href="{% url 'channel_id' channel.source.channel_id %}">
                         <img
-                          src={`${TA_BASE_URL}${channel?.channel_banner_url}`}
+                          src={`${TA_BASE_URL.client}${channel?.channel_banner_url}`}
                           alt="{{ channel.source.channel_id }}-banner"
                         />
                       </a>
@@ -138,7 +157,7 @@ const Channel: NextPage = () => {
                         <div className="round-img">
                           <a href="{% url 'channel_id' channel.source.channel_id %}">
                             <img
-                              src={`${TA_BASE_URL}${channel?.channel_thumb_url}`}
+                              src={`${TA_BASE_URL.client}${channel?.channel_thumb_url}`}
                               alt="channel-thumb"
                             />
                           </a>

@@ -1,8 +1,14 @@
 import { Channel } from "../types/channel";
-import { TA_BASE_URL } from "./constants";
+import { getTAUrl } from "./constants";
+
+const TA_BASE_URL = getTAUrl();
 
 export const getChannels = async (token: string): Promise<Channel> => {
-  const response = await fetch(`${TA_BASE_URL}/api/channel/`, {
+  if (!token) {
+    throw new Error(`Unable to fetch channels, no token provided`);
+  }
+
+  const response = await fetch(`${TA_BASE_URL.server}/api/channel/`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
