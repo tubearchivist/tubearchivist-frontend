@@ -4,8 +4,8 @@ import { getTAUrl } from "./constants";
 
 const TA_BASE_URL = getTAUrl();
 
-export const getDownloads = async (token: string, ignoredStatus: boolean): Promise<Download> => {
-  const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${ignoredStatus ? 'ignore' : 'pending'}`, {
+export const getDownloads = async (token: string, filter: boolean): Promise<Download> => {
+  const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${filter ? 'ignore' : 'pending'}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",

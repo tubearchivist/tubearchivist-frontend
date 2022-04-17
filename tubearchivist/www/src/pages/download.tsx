@@ -34,7 +34,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
-    await queryClient.prefetchQuery(["downloads", session.ta_token.token], () =>
+    await queryClient.prefetchQuery(["downloads", session.ta_token.token, false], () =>
         getDownloads(session.ta_token.token, false)
     );
 
@@ -48,33 +48,38 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
 
 const Download: NextPage = () => {
     const { data: session } = useSession();
+
+    const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
+    const [formHidden, setFormHidden] = useState<FormHidden>(true);
+
     const {
         data: downloads,
         error,
         isLoading,
         refetch,
     } = useQuery(
-        ["downloads", session.ta_token.token],
+        ["downloads", session.ta_token.token, ignoredStatus],
         () => getDownloads(session.ta_token.token, ignoredStatus),
         {
             enabled: !!session?.ta_token?.token,
-            refetchInterval: 1500,
-            refetchIntervalInBackground: false,
+            // refetchInterval: 1500,
+            // refetchIntervalInBackground: false,
         }
     );
 
     const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
-    const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
-    const [formHidden, setFormHidden] = useState<FormHidden>(true);
+    
 
     const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
         setViewStyle(selectedViewStyle);
     };
-
+    
     const handleSetIgnoredStatus = (selectedIgnoredStatus: IgnoredStatus) => {
+        // ignoredStatus = !ignoredStatus;
         setIgnoredStatus(selectedIgnoredStatus);
         refetch();
     };
+    
 
     const handleSetFormHidden = (selectedFormHidden: FormHidden) => {
         setFormHidden(selectedFormHidden);
