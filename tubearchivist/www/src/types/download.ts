@@ -7,7 +7,6 @@ export interface Download {
 export interface DownloadResponse {
   data: Datum[];
   message: string;
-
 }
 
 export interface Config {
@@ -85,23 +84,29 @@ export interface Subscriptions {
 }
 
 export interface Datum {
-  active: boolean;
-  category: Category[];
-  channel: Channel;
-  date_downloaded: number;
-  description: string;
-  media_url: string;
-  player: Player;
-  playlist: Playlist[];
+  channel_id: string;
+  channel_indexed: boolean;
+  channel_name: string;
+  duration: string;
   published: string;
-  stats: Stats;
-  tags: string[];
+  status: string;
+  timestamp: number;
   title: string;
-  vid_last_refresh: LastRefresh;
-  vid_thumb_base64: string;
   vid_thumb_url: string;
   youtube_id: string;
-  status: "pending";
+  
+  // active: boolean;
+  // category: Category[];
+  // channel: Channel;
+  // date_downloaded: number;
+  // description: string;
+  // media_url: string;
+  // player: Player;
+  // playlist: Playlist[];
+  // stats: Stats;
+  // tags: string[];
+  // vid_last_refresh: LastRefresh;
+  // vid_thumb_base64: string;
 }
 
 export enum Category {
