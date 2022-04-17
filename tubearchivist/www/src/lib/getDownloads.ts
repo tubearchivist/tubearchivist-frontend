@@ -1,9 +1,11 @@
 import { Download } from "../types/download";
 import { DownloadResponse } from "../types/download";
-import { TA_BASE_URL } from "./constants";
+import { getTAUrl } from "./constants";
 
-export const getDownloads = async (token: string): Promise<Download> => {
-  const response = await fetch(`${TA_BASE_URL}/api/download/`, {
+const TA_BASE_URL = getTAUrl();
+
+export const getDownloads = async (token: string, ignoredStatus: boolean): Promise<Download> => {
+  const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${ignoredStatus ? 'ignore' : 'pending'}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -24,7 +26,7 @@ export const sendDownloads = async (token: string, input: string): Promise<Downl
       "status": "pending"
     }]
   };
-  const response = await fetch(`${TA_BASE_URL}/api/download/`, {
+  const response = await fetch(`${TA_BASE_URL.server}/api/download/`, {
     body: JSON.stringify(data),
     headers: {
       Accept: "application/json",

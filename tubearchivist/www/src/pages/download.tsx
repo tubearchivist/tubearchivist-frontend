@@ -5,7 +5,6 @@ import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import NextImage from "next/image";
-import { TA_BASE_URL } from "../lib/constants";
 import { getDownloads } from "../lib/getDownloads";
 import { sendDownloads } from "../lib/getDownloads";
 import RescanIcon from "../images/icon-rescan.svg";
@@ -13,7 +12,9 @@ import DownloadIcon from "../images/icon-download.svg";
 import AddIcon from "../images/icon-add.svg";
 import GridViewIcon from "../images/icon-gridview.svg";
 import ListViewIcon from "../images/icon-listview.svg";
+import { getTAUrl } from "../lib/constants";
 
+const TA_BASE_URL = getTAUrl();
 
 type ViewStyle = "grid" | "list";
 type IgnoredStatus = boolean;
@@ -34,7 +35,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     await queryClient.prefetchQuery(["downloads", session.ta_token.token], () =>
-        getDownloads(session.ta_token.token)
+        getDownloads(session.ta_token.token, false)
     );
 
     return {
@@ -51,15 +52,16 @@ const Download: NextPage = () => {
         data: downloads,
         error,
         isLoading,
+        refetch,
     } = useQuery(
         ["downloads", session.ta_token.token],
-        () => getDownloads(session.ta_token.token),
+        () => getDownloads(session.ta_token.token, ignoredStatus),
         {
             enabled: !!session?.ta_token?.token,
+            refetchInterval: 1500,
+            refetchIntervalInBackground: false,
         }
     );
-
-    var count = 0;
 
     const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
     const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
@@ -71,6 +73,7 @@ const Download: NextPage = () => {
 
     const handleSetIgnoredStatus = (selectedIgnoredStatus: IgnoredStatus) => {
         setIgnoredStatus(selectedIgnoredStatus);
+        refetch();
     };
 
     const handleSetFormHidden = (selectedFormHidden: FormHidden) => {
@@ -142,31 +145,17 @@ const Download: NextPage = () => {
                     <div className="view-controls">
                         <div className="toggle">
                             <span>Show only ignored videos:</span>
-                            {ignoredStatus &&
-                                <div className="toggleBox">
-                                    <input
-                                        id="show_ignored_only"
-                                        onChange={() => handleSetIgnoredStatus(false)}
-                                        type="checkbox"
-                                        checked
-                                    />
-                                    <label htmlFor="" className="onbtn">
-                                        On
-                                    </label>
-                                </div>
-                            }
-                            {!ignoredStatus &&
-                                <div className="toggleBox">
-                                    <input
-                                        id="show_ignored_only"
-                                        onChange={() => handleSetIgnoredStatus(true)}
-                                        type="checkbox"
-                                    />
-                                    <label htmlFor="" className="ofbtn">
-                                        Off
-                                    </label>
-                                </div>
-                            }
+                            <div className="toggleBox">
+                                <input
+                                    id="show_ignored_only"
+                                    onChange={() => handleSetIgnoredStatus(!ignoredStatus)}
+                                    type="checkbox"
+                                    checked={ignoredStatus}
+                                />
+                                <label htmlFor="" className={ignoredStatus ? "onbtn" : "ofbtn"}>
+                                    {ignoredStatus ? "On" : "Off"}
+                                </label>
+                            </div>
                         </div>
                         <div className="view-icons">
                             <NextImage
@@ -201,21 +190,14 @@ const Download: NextPage = () => {
                             <button onClick={() => console.log("deleteQueue(this)")} data-id="pending" title="Delete all pending videos from the queue">Delete all queued</button>
                         </div>
                     }
-                    {downloads?.data?.forEach((video) => {
-                        if ((video?.status == "ignore" && ignoredStatus) || (video?.status == "pending" && !ignoredStatus)) {
-                            count++;
-                        }
-                    })} 
-                    <h3>Total videos: {count} {!count && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
+                    <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
                     <div className={`dl-list ${viewStyle}`}>
-                        {downloads.data &&
+                        {downloads?.data &&
                             downloads?.data?.map((video) => {
-                                count++;
-                                if ((video?.status == "ignore" && ignoredStatus) || (video?.status == "pending" && !ignoredStatus)) {
                                 return (
                                     <div key={video?.youtube_id} className={`dl-item ${viewStyle}`}>
                                         <div className={`dl-thumb ${viewStyle}`}>
-                                            <img src={`${TA_BASE_URL}${video?.vid_thumb_url}`} alt="video_thumb"></img>
+                                            <img src={`${TA_BASE_URL.server}${video?.vid_thumb_url}`} alt="video_thumb"></img>
                                             {ignoredStatus && <span>ignored</span>}
                                             {/* {% if show_ignored_only %} */}
                                                 {/* <span>ignored</span> */}
@@ -257,7 +239,6 @@ const Download: NextPage = () => {
                                         </div>
                                     </div>
                                 );
-                                }
                             })
                         }
                         {/* {% if results %} */}
