@@ -333,9 +333,9 @@ button:hover {
   filter: var(--img-filter);
 }
 
-#hidden-form {
+/* #hidden-form {
   display: none;
-}
+} */
 
 #text-reveal {
   height: 0px;
