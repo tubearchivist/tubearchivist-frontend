@@ -2,8 +2,10 @@
 
 <center><h1>Your self hosted YouTube media server</h1></center>
 
+Tube Archivist has a new home: https://github.com/tubearchivist/tubearchivist
+
 ## Table of contents:
-* [Wiki](https://github.com/bbilly1/tubearchivist/wiki) for a detailed documentation, with [FAQ](https://github.com/bbilly1/tubearchivist/wiki/FAQ)
+* [Wiki](https://github.com/tubearchivist/tubearchivist/wiki) for a detailed documentation, with [FAQ](https://github.com/tubearchivist/tubearchivist/wiki/FAQ)
 * [Core functionality](#core-functionality)
 * [Screenshots](#screenshots)
 * [Problem Tube Archivist tries to solve](#problem-tube-archivist-tries-to-solve)
@@ -47,8 +49,8 @@
 Once your YouTube video collection grows, it becomes hard to search and find a specific video. That's where Tube Archivist comes in: By indexing your video collection with metadata from YouTube, you can organize, search and enjoy your archived YouTube videos without hassle offline through a convenient web interface.
 
 ## Connect
-- [Discord](https://discord.gg/AFwz8nE7BK): Connect with us on our brand new Discord server.
-- [r/TubeArchivist](https://www.reddit.com/r/TubeArchivist/): Join our brand new Subreddit.
+- [Discord](https://discord.gg/AFwz8nE7BK): Connect with us on our Discord server.
+- [r/TubeArchivist](https://www.reddit.com/r/TubeArchivist/): Join our Subreddit.
 
 ## Installing and updating
 Take a look at the example `docker-compose.yml` file provided. Use the *latest* or the named semantic version tag. The *unstable* tag is for intermediate testing and as the name implies, is **unstable** and not be used on your main installation but in a [testing environment](CONTRIBUTING.md).  
@@ -76,7 +78,9 @@ Should that not be an option, the Tube Archivist container takes these two addit
 Changing any of these two environment variables will change the files *nginx.conf* and *uwsgi.ini* at startup using `sed` in your container.
 
 ### Elasticsearch
-**Note**: Newest Tube Archivist depends on Elasticsearch version 7.17 to provide an automatic updatepath. 
+**Note**: Newest Tube Archivist depends on Elasticsearch version 7.17 to provide an automatic updatepath in the future. 
+
+Use `bbilly1/tubearchivist-es` to automatically get the recommended version, or use the official image with the version tag in the docker-compose file.
 
 Stores video meta data and makes everything searchable. Also keeps track of the download queue.
   - Needs to be accessible over the default port `9200`
@@ -98,11 +102,11 @@ For some architectures it might be required to run Redis JSON on a nonstandard p
 ### Updating Tube Archivist
 You will see the current version number of **Tube Archivist** in the footer of the interface so you can compare it with the latest release to make sure you are running the *latest and greatest*.  
 * There can be breaking changes between updates, particularly as the application grows, new environment variables or settings might be required for you to set in the your docker-compose file. *Always* check the **release notes**: Any breaking changes will be marked there.  
-* All testing and development is done with the Elasticsearch version number as mentioned in the provided *docker-compose.yml* file. This will be updated when a new release of Elasticsearch is available. Running an older version of Elasticsearch is most likely not going to result in any issues, but it's still recommended to run the same version as mentioned.
+* All testing and development is done with the Elasticsearch version number as mentioned in the provided *docker-compose.yml* file. This will be updated when a new release of Elasticsearch is available. Running an older version of Elasticsearch is most likely not going to result in any issues, but it's still recommended to run the same version as mentioned. Use `bbilly1/tubearchivist-es` to automatically get the recommended version.
 
 ### Alternative installation instructions:
 - **arm64**: The Tube Archivist container is multi arch, so is Elasticsearch. RedisJSON doesn't offer arm builds, you can use `bbilly1/rejson`, an unofficial rebuild for arm64.
-- **Synology**: There is a [discussion thread](https://github.com/bbilly1/tubearchivist/discussions/48) with Synology installation instructions.
+- **Synology**: There is a [discussion thread](https://github.com/tubearchivist/tubearchivist/discussions/48) with Synology installation instructions.
 - **Unraid**: The three containers needed are all in the Community Applications. First install `TubeArchivist RedisJSON` followed by `TubeArchivist ES`, and finally you can install `TubeArchivist`. If you have unraid specific issues, report those to the [support thread](https://forums.unraid.net/topic/114073-support-crocs-tube-archivist/ "support thread").
 - **Helm Chart**: There is a Helm Chart available at https://github.com/insuusvenerati/helm-charts. Mostly self-explanatory but feel free to ask questions in the discord / subreddit.
 
@@ -148,22 +152,23 @@ We have come far, nonetheless we are not short of ideas on how to improve and ex
 - [ ] User roles
 - [ ] Podcast mode to serve channel as mp3
 - [ ] Implement [PyFilesystem](https://github.com/PyFilesystem/pyfilesystem2) for flexible video storage
-- [ ] Implement [Apprise](https://github.com/caronc/apprise) for notifications ([#97](https://github.com/bbilly1/tubearchivist/issues/97))
-- [ ] Add [SponsorBlock](https://sponsor.ajay.app/) integration
-- [ ] Add passing browser cookies to yt-dlp ([#199](https://github.com/bbilly1/tubearchivist/issues/199))
-- [ ] User created playlists, random and repeat controls ([#108](https://github.com/bbilly1/tubearchivist/issues/108), [#220](https://github.com/bbilly1/tubearchivist/issues/220))
-- [ ] Auto play or play next link
+- [ ] Implement [Apprise](https://github.com/caronc/apprise) for notifications ([#97](https://github.com/tubearchivist/tubearchivist/issues/97))
+- [ ] Add passing browser cookies to yt-dlp ([#199](https://github.com/tubearchivist/tubearchivist/issues/199))
+- [ ] User created playlists, random and repeat controls ([#108](https://github.com/tubearchivist/tubearchivist/issues/108), [#220](https://github.com/tubearchivist/tubearchivist/issues/220))
+- [ ] Auto play or play next link ([#226](https://github.com/tubearchivist/tubearchivist/issues/226))
 - [ ] Show similar videos on video page
 - [ ] Multi language support
 - [ ] Show total video downloaded vs total videos available in channel
 - [ ] Make items in grid row configurable to use more of the screen
 - [ ] Add statistics of index
-- [ ] Implement complete offline media file import from json file ([#138](https://github.com/bbilly1/tubearchivist/issues/138))
-- [ ] Filter and query in search form, search by url query ([#134](https://github.com/bbilly1/tubearchivist/issues/134), [#139](https://github.com/bbilly1/tubearchivist/issues/139))
-- [ ] Auto ignore videos by keyword ([#163](https://github.com/bbilly1/tubearchivist/issues/163))
-- [ ] Custom searchable notes to videos, channels, playlists ([#144](https://github.com/bbilly1/tubearchivist/issues/144))
+- [ ] Implement complete offline media file import from json file ([#138](https://github.com/tubearchivist/tubearchivist/issues/138))
+- [ ] Filter and query in search form, search by url query ([#134](https://github.com/tubearchivist/tubearchivist/issues/134), [#139](https://github.com/tubearchivist/tubearchivist/issues/139))
+- [ ] Auto ignore videos by keyword ([#163](https://github.com/tubearchivist/tubearchivist/issues/163))
+- [ ] Custom searchable notes to videos, channels, playlists ([#144](https://github.com/tubearchivist/tubearchivist/issues/144))
+- [ ] Download video comments
 
 Implemented:
+- [X] Add [SponsorBlock](https://sponsor.ajay.app/) integration [2022-04-16]
 - [X] Implement per channel settings [2022-03-26]
 - [X] Subtitle download & indexing [2022-02-13]
 - [X] Fancy advanced unified search interface [2022-01-08]

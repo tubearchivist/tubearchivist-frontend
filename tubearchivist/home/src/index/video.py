@@ -10,7 +10,6 @@ from datetime import datetime
 
 import requests
 from django.conf import settings
-from home.src.download.thumbnails import ThumbManager
 from home.src.es.connect import ElasticWrap
 from home.src.index import channel as ta_channel
 from home.src.index.generic import YouTubeItem
@@ -417,16 +416,15 @@ class YoutubeVideo(YouTubeItem, YoutubeSubtitle):
 
     def _check_get_sb(self):
         """check if need to run sponsor block"""
-        integrate = False
-        if self.config["downloads"]["integrate_sponsorblock"]:
-            integrate = True
+        integrate = self.config["downloads"]["integrate_sponsorblock"]
 
         if self.video_overwrites:
             single_overwrite = self.video_overwrites.get(self.youtube_id)
             if not single_overwrite:
                 return integrate
 
-            integrate = single_overwrite.get("integrate_sponsorblock", False)
+            if "integrate_sponsorblock" in single_overwrite:
+                return single_overwrite.get("integrate_sponsorblock")
 
         return integrate
 
@@ -438,7 +436,8 @@ class YoutubeVideo(YouTubeItem, YoutubeSubtitle):
         upload_date_time = datetime.strptime(upload_date, "%Y%m%d")
         published = upload_date_time.strftime("%Y-%m-%d")
         last_refresh = int(datetime.now().strftime("%s"))
-        base64_blur = ThumbManager().get_base64_blur(self.youtube_id)
+        # base64_blur = ThumbManager().get_base64_blur(self.youtube_id)
+        base64_blur = False
         # build json_data basics
         self.json_data = {
             "title": self.youtube_meta["title"],
