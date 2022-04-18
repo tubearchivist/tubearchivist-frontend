@@ -12,6 +12,8 @@ import DownloadIcon from "../images/icon-download.svg";
 import AddIcon from "../images/icon-add.svg";
 import GridViewIcon from "../images/icon-gridview.svg";
 import ListViewIcon from "../images/icon-listview.svg";
+import StopIcon from "../images/icon-stop.svg";
+import CloseIcon from "../images/icon-close.svg";
 import { getTAUrl } from "../lib/constants";
 
 const TA_BASE_URL = getTAUrl();
@@ -106,15 +108,60 @@ const Download: NextPage = () => {
                     <div className="title-bar">
                         <h1>Downloads</h1>
                     </div>
-                    {errorMessage &&
-                        <div id="notifications">
+                    <div id="notifications">
+                        {errorMessage &&
                             <div className="error notification">
                                 <h3>Failed to extract links.</h3>
                                 <p>Not a video, channel or playlist ID or URL</p>
                             </div>
-                        </div>
-                    }
-                    <div id="downloadControl"></div>
+                        }
+                        {
+                            // <div className="info notification">
+                            //     <h3>Adding new videos to download queue.</h3>
+                            //     <p>Extracting lists</p>
+                            //     <p>Progress: 0/0</p>
+                            // </div>
+                        }
+                        {
+                            // <div className="info notification">
+                            //     <h3>Rescanning channels and playlists.</h3>
+                            //     <p>Looking for new videos.</p>
+                            // </div>
+                        }
+                        {
+                            // <div className="info notification">
+                            //     <h3>Downloading: `VIDEO_TITLE`</h3>
+                            //     <p>processing</p>
+                            //     <p>`DOWNLOADED_PERCENTAGE`% of `VIDEO_SIVE``VIDEO_SIZE_UNIT` at `DOWNLOAD_SPEED``DOWNLOAD_SPEED_UNIT` - time left: `DOWNLOAD_TIME_LEFT`</p>
+                            //     <p>processing</p>
+                            //     <p>Moving</p>
+                            //     <p>Completed</p>
+                            // </div>
+                        }
+                    </div>
+                    <div id="downloadControl">
+                        {/* Appears when video is downloading */}
+                        {/* <div className="dl-control-icons"> 
+                            <NextImage
+                                width={30}
+                                height={30}
+                                src={StopIcon}
+                                alt="stop icon"
+                                title="Stop Download Queue"
+                                id="stop-icon"
+                                onClick={() => console.log("stopQueue()")}
+                            />
+                            <NextImage
+                                width={30}
+                                height={30}
+                                src={CloseIcon}
+                                alt="kill icon"
+                                title="Kill Download Queue"
+                                id="kill-icon"
+                                onClick={() => console.log("killQueue()")}
+                            />
+                        </div> */}
+                    </div>
                     <div className="info-box info-box-3">
                         <div className="icon-text">
                             <NextImage
@@ -123,6 +170,7 @@ const Download: NextPage = () => {
                                 src={RescanIcon}
                                 alt="rescan-icon"
                                 title="Rescan subscriptions"
+                                // className="rotate-img" // Set when rescanning
                                 onClick={() => console.log("rescanPending()")}
                             />
                             {/* <img id="rescan-icon" onclick="rescanPending()" src="{% static 'img/icon-rescan.svg' %}" alt="rescan-icon"></img> */}
@@ -135,6 +183,7 @@ const Download: NextPage = () => {
                                 src={DownloadIcon}
                                 alt="download-icon"
                                 title="Start download"
+                                // className="bounce-img" // Set when video is downloading
                                 onClick={() => console.log("dlPending()")}
                             />
                             {/* <img id="download-icon" onclick="dlPending()" src="{% static 'img/icon-download.svg' %}" alt="download-icon"></img> */}
