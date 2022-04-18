@@ -106,7 +106,14 @@ const Download: NextPage = () => {
                     <div className="title-bar">
                         <h1>Downloads</h1>
                     </div>
-                    <div id="notifications"></div>
+                    {errorMessage &&
+                        <div id="notifications">
+                            <div className="error notification">
+                                <h3>Failed to extract links.</h3>
+                                <p>Not a video, channel or playlist ID or URL</p>
+                            </div>
+                        </div>
+                    }
                     <div id="downloadControl"></div>
                     <div className="info-box info-box-3">
                         <div className="icon-text">
@@ -147,9 +154,6 @@ const Download: NextPage = () => {
                                 <div className="show-form">
                                     <form id="hidden-form" onSubmit={addToDownloadQueue}>
                                         <textarea name="vid_url" cols={40} rows={4} placeholder="Enter Video Urls or IDs here..." required id="id_vid_url" spellCheck="false" />
-                                        {errorMessage &&
-                                            <p><span className="danger-zone">Invalid input!</span></p>
-                                        }
                                         <button type="submit">Add to download queue</button>
                                     </form>
                                 </div>
