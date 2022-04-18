@@ -5,7 +5,7 @@ import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import NextImage from "next/image";
-import { getDownloads, sendDeleteAllQueuedIgnored, sendDeleteVideoQueuedIgnored } from "../lib/getDownloads";
+import { getDownloads, sendDeleteAllQueuedIgnored, sendDeleteVideoQueuedIgnored, sendMoveVideoQueuedIgnored } from "../lib/getDownloads";
 import { sendDownloads } from "../lib/getDownloads";
 import RescanIcon from "../images/icon-rescan.svg";
 import DownloadIcon from "../images/icon-download.svg";
@@ -237,8 +237,8 @@ const Download: NextPage = () => {
                                             {/* <p>Published: {{ video.source.published }} | Duration: {{ video.source.duration }} | {{ video.source.youtube_id }}</p> */}
                                             {ignoredStatus &&
                                                 <div>
-                                                    <button data-id={`${video?.youtube_id}`} onClick={() => console.log("addSingle(this)")}>Add to queue</button>
-                                                    <button data-id={`${video?.youtube_id}`} onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Forget</button>
+                                                    <button data-id={`${video?.youtube_id}`} onClick={() => sendMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "pending")}>Add to queue</button>
+                                                    <button title="Remove video from the ignored list." onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Remove</button>
                                                 </div>
                                             }        
                                             {/* {% if show_ignored_only %} */}
@@ -246,9 +246,9 @@ const Download: NextPage = () => {
                                                 {/* <button data-id="{{ video.source.youtube_id }}" onclick="addSingle(this)">Add to queue</button> */}
                                             {!ignoredStatus &&
                                                 <div>
-                                                    <button data-id={`${video?.youtube_id}`} onClick={() => console.log("toIgnore(this)")}>Ignore</button>
+                                                    <button data-id={`${video?.youtube_id}`} onClick={() => sendMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "ignore")}>Ignore</button>
                                                     <button id={`${video?.youtube_id}`} data-id={`${video?.youtube_id}`} onClick={() => console.log("downloadNow(this)")}>Download now</button>
-                                                    <button data-id={`${video?.youtube_id}`} onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Forget</button>
+                                                    <button title="Delete video from the queue." onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Delete</button>
                                                 </div>
                                             }
                                             {/* {% else %} */}

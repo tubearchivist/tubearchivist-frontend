@@ -75,3 +75,24 @@ export const sendDeleteVideoQueuedIgnored = async (token: string, videoId: strin
   }
   return response.json();
 };
+
+export const sendMoveVideoQueuedIgnored = async (token: string, videoId: string, status: string): Promise<Download> => {
+  var data = {
+    "status": status
+  };
+  const response = await fetch(`${TA_BASE_URL.server}/api/download/${videoId}/`, {
+    body: JSON.stringify(data),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+      mode: "no-cors",
+    },
+    method: "POST"
+  });
+  if (!response.ok) {
+    // throw new Error("Error adding content to the download queue.");
+    // return response.json();
+  }
+  return response.json();
+};
