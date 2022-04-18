@@ -19,6 +19,7 @@ const TA_BASE_URL = getTAUrl();
 type ViewStyle = "grid" | "list";
 type IgnoredStatus = boolean;
 type FormHidden = boolean;
+type ErrorMessage = boolean;
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -51,6 +52,7 @@ const Download: NextPage = () => {
 
     const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
     const [formHidden, setFormHidden] = useState<FormHidden>(true);
+    
 
     const {
         data: downloads,
@@ -62,13 +64,13 @@ const Download: NextPage = () => {
         () => getDownloads(session.ta_token.token, ignoredStatus),
         {
             enabled: !!session?.ta_token?.token,
-            // refetchInterval: 1500,
-            // refetchIntervalInBackground: false,
+            refetchInterval: 1500,
+            refetchIntervalInBackground: false,
         }
     );
 
     const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
-    
+    const [errorMessage, setErrorMessage] = useState<ErrorMessage>(false);
 
     const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
         setViewStyle(selectedViewStyle);
@@ -85,10 +87,14 @@ const Download: NextPage = () => {
         setFormHidden(selectedFormHidden);
     };
 
+    const handleSetErrorMessage = (selectedErrorMessage: ErrorMessage) => {
+        setErrorMessage(selectedErrorMessage);
+    };
+
     const addToDownloadQueue = event => {
         event.preventDefault();
-        sendDownloads(session.ta_token.token, event.target.vid_url.value);
-        handleSetFormHidden(true);
+        sendDownloads(session.ta_token.token, event.target.vid_url.value).then((response) => !response.message ? handleSetErrorMessage(false) : handleSetErrorMessage(true));
+        errorMessage ? handleSetFormHidden(false) : handleSetFormHidden(true);
     }
 
     return (
@@ -141,6 +147,9 @@ const Download: NextPage = () => {
                                 <div className="show-form">
                                     <form id="hidden-form" onSubmit={addToDownloadQueue}>
                                         <textarea name="vid_url" cols={40} rows={4} placeholder="Enter Video Urls or IDs here..." required id="id_vid_url" spellCheck="false" />
+                                        {errorMessage &&
+                                            <p><span className="danger-zone">Invalid input!</span></p>
+                                        }
                                         <button type="submit">Add to download queue</button>
                                     </form>
                                 </div>
@@ -196,8 +205,8 @@ const Download: NextPage = () => {
                         </div>
                     }
                     <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
-                    <div className={`dl-list ${viewStyle}`}>
-                        {downloads?.data &&
+                    <div className={`dl-list ${viewStyle}`}>                       
+                        {!isLoading && !error && downloads?.data &&
                             downloads?.data?.map((video) => {
                                 return (
                                     <div key={video?.youtube_id} className={`dl-item ${viewStyle}`}>

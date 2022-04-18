@@ -37,7 +37,8 @@ export const sendDownloads = async (token: string, input: string): Promise<Downl
     method: "POST"
   });
   if (!response.ok) {
-    throw new Error("Error adding content to the download queue.");
+    // throw new Error("Error adding content to the download queue.");
+    // return response.json();
   }
   return response.json();
 };
