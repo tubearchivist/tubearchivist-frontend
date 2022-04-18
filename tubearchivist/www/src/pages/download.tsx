@@ -5,7 +5,7 @@ import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import NextImage from "next/image";
-import { getDownloads } from "../lib/getDownloads";
+import { getDownloads, sendDeleteAllQueuedIgnored } from "../lib/getDownloads";
 import { sendDownloads } from "../lib/getDownloads";
 import RescanIcon from "../images/icon-rescan.svg";
 import DownloadIcon from "../images/icon-download.svg";
@@ -199,13 +199,13 @@ const Download: NextPage = () => {
                     {ignoredStatus && 
                         <div className="title-split">
                             <h2>Ignored from download</h2>
-                            <button onClick={() => console.log("deleteQueue(this)")} data-id="ignore" title="Delete all previously ignored videos from the queue">Delete all ignored</button>
+                            <button onClick={() => sendDeleteAllQueuedIgnored(session.ta_token.token, "ignore")} title="Delete all previously ignored videos from the queue">Delete all ignored</button>
                         </div>
                     }
                     {!ignoredStatus && 
                         <div className="title-split">
                             <h2>Download queue</h2>
-                            <button onClick={() => console.log("deleteQueue(this)")} data-id="pending" title="Delete all pending videos from the queue">Delete all queued</button>
+                            <button onClick={() => sendDeleteAllQueuedIgnored(session.ta_token.token, "pending")} title="Delete all pending videos from the queue">Delete all queued</button>
                         </div>
                     }
                     <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>

@@ -2,12 +2,13 @@ export interface Download {
   data: Datum[];
   config: Config;
   paginate: boolean;
-}
-
-export interface DownloadResponse {
-  data: Datum[];
   message: string;
 }
+
+// export interface DownloadResponse {
+//   data: Datum[];
+//   message: string;
+// }
 
 export interface Config {
   archive: Archive;
