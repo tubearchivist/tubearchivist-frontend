@@ -40,7 +40,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     await queryClient.prefetchQuery(["downloads", session.ta_token.token, false], () =>
-        getDownloads(session.ta_token.token, false)
+        getDownloads(session.ta_token.token, false, 1)
     );
 
     return {
@@ -64,7 +64,7 @@ const Download: NextPage = () => {
         refetch,
     } = useQuery(
         ["downloads", session.ta_token.token, ignoredStatus],
-        () => getDownloads(session.ta_token.token, ignoredStatus),
+        () => getDownloads(session.ta_token.token, ignoredStatus, page),
         {
             enabled: !!session?.ta_token?.token,
             refetchInterval: 1500,
@@ -116,6 +116,12 @@ const Download: NextPage = () => {
                         <h1>Downloads</h1>
                     </div>
                     <div id="notifications">
+                        {downloads?.message &&
+                            <div className="error notification">
+                                <h3>{downloads?.message}</h3>
+                                <p></p>
+                            </div>
+                        }
                         {errorMessage &&
                             <div className="error notification">
                                 <h3>Failed to extract links.</h3>
@@ -268,9 +274,9 @@ const Download: NextPage = () => {
                             <button onClick={() => sendDeleteAllQueuedIgnored(session.ta_token.token, "pending")} title="Delete all pending videos from the queue">Delete all queued</button>
                         </div>
                     }
-                    <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
+                    <h3>Total videos: {downloads?.data?.length ? downloads?.data?.length : 'N/A'} {!downloads?.data?.length && !downloads?.message && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
                     <div className={`dl-list ${viewStyle}`}>                       
-                        {!isLoading && !error && downloads?.data &&
+                        {!isLoading && !error && !downloads?.message &&
                             downloads?.data?.map((video) => {
                                 return (
                                     <div key={video?.youtube_id} className={`dl-item ${viewStyle}`}>
@@ -350,7 +356,6 @@ const Download: NextPage = () => {
                                 {/* </div> */}
                             {/* {% endfor %} */}
                         {/* {% endif %} */}
-                        
                     </div>
                 </div>
                 <div className="boxed-content">

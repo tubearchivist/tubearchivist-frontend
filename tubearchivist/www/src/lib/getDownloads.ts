@@ -3,8 +3,8 @@ import { getTAUrl } from "./constants";
 
 const TA_BASE_URL = getTAUrl();
 
-export const getDownloads = async (token: string, filter: boolean): Promise<Download> => {
-  const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${filter ? 'ignore' : 'pending'}`, {
+export const getDownloads = async (token: string, filter: boolean, page: number): Promise<Download> => {
+  const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${filter ? 'ignore' : 'pending'}&page=${page}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
@@ -12,10 +12,19 @@ export const getDownloads = async (token: string, filter: boolean): Promise<Down
       mode: "no-cors",
     },
   });
-  if (!response.ok) {
-    throw new Error("Error getting download queue information");
+  if (response.ok) {
+    return response.json();
+  } else {
+    var error: Download = {
+      data: null,
+      config: null,
+      paginate: null,
+      message: response.statusText + " (" + response.status + ")",
+    }
+    // error = response.statusText + " (" + response.status + ");
+    // throw new Error(response.statusText + " (" + response.status + ")");
+    return error;
   }
-  return response.json();
 };
 
 export const sendDownloads = async (token: string, input: string): Promise<Download> => {
