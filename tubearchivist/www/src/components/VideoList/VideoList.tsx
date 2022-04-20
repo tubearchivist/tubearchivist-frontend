@@ -137,12 +137,12 @@ const VideoList = () => {
                     <div className="video-thumb-wrap list">
                       <div className="video-thumb">
                         <NextImage
-                          src={`${TA_BASE_URL.client}/cache/${video.vid_thumb_url}`}
+                          src={`${TA_BASE_URL.client}${video.vid_thumb_url}`}
                           alt="video-thumb"
                           width={640}
                           height={360}
-                          blurDataURL={video.vid_thumb_base64}
-                          placeholder="blur"
+                          // blurDataURL={video.vid_thumb_base64}
+                          // placeholder="blur"
                         />
                         {/* {% if video.source.player.progress %} */}
                         <div

@@ -5,9 +5,11 @@ import { useRouter } from "next/router";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../../components/CustomHead";
 import { Layout } from "../../components/Layout";
-import { TA_BASE_URL } from "../../lib/constants";
+import { getTAUrl } from "../../lib/constants";
 import { getVideo } from "../../lib/getVideos";
 import VideoPlayer from "../../components/VideoPlayer/VideoPlayer";
+
+const TA_BASE_URL = getTAUrl();
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -66,7 +68,7 @@ const Video: NextPage = () => {
             <div className="round-img">
               <a href="{% url 'channel_id' video.channel.channel_id %}">
                 <NextImage
-                  src={`${TA_BASE_URL}/cache/channels/${data.data.channel.channel_id}_thumb.jpg`}
+                  src={`${TA_BASE_URL.client}/cache/channels/${data.data.channel.channel_id}_thumb.jpg`}
                   alt="channel-thumb"
                   width={90}
                   height={90}
