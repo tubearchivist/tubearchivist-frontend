@@ -19,9 +19,11 @@ import { getTAUrl } from "../lib/constants";
 const TA_BASE_URL = getTAUrl();
 
 type ViewStyle = "grid" | "list";
+type Page = number;
 type IgnoredStatus = boolean;
 type FormHidden = boolean;
 type ErrorMessage = boolean;
+
 
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
@@ -54,7 +56,6 @@ const Download: NextPage = () => {
 
     const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
     const [formHidden, setFormHidden] = useState<FormHidden>(true);
-    
 
     const {
         data: downloads,
@@ -73,17 +74,17 @@ const Download: NextPage = () => {
 
     const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
     const [errorMessage, setErrorMessage] = useState<ErrorMessage>(false);
+    const [page, setPage] = useState<Page>(1);
+    
 
     const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
         setViewStyle(selectedViewStyle);
     };
     
     const handleSetIgnoredStatus = (selectedIgnoredStatus: IgnoredStatus) => {
-        // ignoredStatus = !ignoredStatus;
         setIgnoredStatus(selectedIgnoredStatus);
         refetch();
     };
-    
 
     const handleSetFormHidden = (selectedFormHidden: FormHidden) => {
         setFormHidden(selectedFormHidden);
@@ -91,6 +92,12 @@ const Download: NextPage = () => {
 
     const handleSetErrorMessage = (selectedErrorMessage: ErrorMessage) => {
         setErrorMessage(selectedErrorMessage);
+    };
+
+    const handleSetPage = (selectedPage: Page) => {
+        console.log(page);
+        setPage(selectedPage);
+        console.log(page);
     };
 
     const addToDownloadQueue = event => {
@@ -225,23 +232,27 @@ const Download: NextPage = () => {
                             </div>
                         </div>
                         <div className="view-icons">
-                            <NextImage
-                                width={30}
-                                height={34}
-                                src={GridViewIcon}
-                                alt="grid view"
-                                title="Switch to grid view"
-                                onClick={() => handleSetViewstyle("grid")}
-                            />
+                            <div className="view-icons-margin">
+                                <NextImage
+                                    width={30}
+                                    height={34}
+                                    src={GridViewIcon}
+                                    alt="grid view"
+                                    title="Switch to grid view"
+                                    onClick={() => handleSetViewstyle("grid")}
+                                />
+                            </div>
                             {/* <img src="{% static 'img/icon-gridview.svg' %}" onclick="changeView(this)" data-origin="downloads" data-value="grid" alt="grid view"> */}
-                            <NextImage
-                                width={30}
-                                height={34}
-                                src={ListViewIcon}
-                                alt="list view"
-                                title="Switch to list view"
-                                onClick={() => handleSetViewstyle("list")}
-                            />
+                            <div className="view-icons-margin">
+                                <NextImage
+                                    width={30}
+                                    height={34}
+                                    src={ListViewIcon}
+                                    alt="list view"
+                                    title="Switch to list view"
+                                    onClick={() => handleSetViewstyle("list")}
+                                />
+                            </div>
                             {/* <img src="{% static 'img/icon-listview.svg' %}" onclick="changeView(this)" data-origin="downloads" data-value="list" alt="list view"> */}
                         </div>
                     </div>
@@ -286,8 +297,8 @@ const Download: NextPage = () => {
                                             {/* <p>Published: {{ video.source.published }} | Duration: {{ video.source.duration }} | {{ video.source.youtube_id }}</p> */}
                                             {ignoredStatus &&
                                                 <div>
-                                                    <button data-id={`${video?.youtube_id}`} onClick={() => sendMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "pending")}>Add to queue</button>
-                                                    <button title="Remove video from the ignored list." onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Remove</button>
+                                                    <button className="button-padding" title="Move this video to the download queue." onClick={() => sendMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "pending")}>Add to queue</button>
+                                                    <button className="button-padding" title="Remove this video from the ignored list." onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Remove</button>
                                                 </div>
                                             }        
                                             {/* {% if show_ignored_only %} */}
@@ -295,9 +306,9 @@ const Download: NextPage = () => {
                                                 {/* <button data-id="{{ video.source.youtube_id }}" onclick="addSingle(this)">Add to queue</button> */}
                                             {!ignoredStatus &&
                                                 <div>
-                                                    <button data-id={`${video?.youtube_id}`} onClick={() => sendMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "ignore")}>Ignore</button>
-                                                    <button id={`${video?.youtube_id}`} data-id={`${video?.youtube_id}`} onClick={() => console.log("downloadNow(this)")}>Download now</button>
-                                                    <button title="Delete video from the queue." onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Delete</button>
+                                                    <button className="button-padding" title="Ignore this video." onClick={() => sendMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "ignore")}>Ignore</button>
+                                                    <button className="button-padding" title="Download this video now." onClick={() => console.log("downloadNow(this)")}>Download now</button>
+                                                    <button className="button-padding" title="Delete video from the queue." onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Delete</button>
                                                 </div>
                                             }
                                             {/* {% else %} */}
@@ -340,6 +351,22 @@ const Download: NextPage = () => {
                             {/* {% endfor %} */}
                         {/* {% endif %} */}
                         
+                    </div>
+                </div>
+                <div className="boxed-content">
+                    <div className="pagination">
+                        <a className="pagination-item" onClick={() => handleSetPage(1)}>First</a>
+                        <a className="pagination-item" onClick={() => handleSetPage(2)}>2</a>
+                        <span>&lt; Page 3</span>
+                        <span> &gt;</span>
+                        <a className="pagination-item" onClick={() => handleSetPage(4)}>4</a>
+                        <a className="pagination-item" onClick={() => handleSetPage(5)}> Last (5) </a>
+                        <a className="pagination-item" onClick={() => handleSetPage(5)}> Max (5) </a>
+                    </div>
+                    <div className="pagination">
+                        <a className="pagination-item" href="?page=2">
+                            Last (2)
+                         </a>
                     </div>
                 </div>
                 {/* <script type="text/javascript" src="{% static 'progress.js' %}"></script> */}
