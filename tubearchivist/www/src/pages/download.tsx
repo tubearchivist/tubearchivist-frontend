@@ -384,22 +384,15 @@ const Download: NextPage = () => {
                                     <a key={`${page}`} className="pagination-item" onClick={() => handleSetPageNumber(page)}>{page}</a>
                             )})
                         }
-                        {downloads?.paginate?.prev_pages &&
-                            <span>&lt; </span>
-                        }
+                        {pageNumber != 1 && <span> &lt; </span> }
                         <span> Page {pageNumber}</span>
-                        {downloads?.paginate?.next_pages &&
-                            <span> &gt; </span>
-                        }
+                        {downloads?.paginate?.last_page && <span> &gt; </span> }
                         {downloads?.paginate?.next_pages &&
                             downloads?.paginate?.next_pages?.map((page) => {
                                 return (
                                     <a key={`${page}`} className="pagination-item" onClick={() => handleSetPageNumber(page)}>{page}</a>
                             )})
                         }
-                        {downloads?.paginate?.next_pages?.forEach((page) => 
-                            <a className="pagination-item" onClick={() => handleSetPageNumber(page)}>{page}</a>
-                        )}
                         {downloads?.paginate?.last_page &&
                             <a className="pagination-item" onClick={() => handleSetPageNumber(downloads?.paginate?.last_page)}> Last ({downloads?.paginate?.last_page}) </a>
                         }
