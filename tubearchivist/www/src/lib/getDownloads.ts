@@ -65,7 +65,7 @@ export const sendDeleteAllQueuedIgnored = async (token: string, filter: string):
     method: "DELETE"
   });
   if (!response.ok) {
-    // throw new Error("Error adding content to the download queue.");
+    throw new Error("Error removing all videos.");
     // return response.json();
   }
   return response.json();
@@ -82,7 +82,7 @@ export const sendDeleteVideoQueuedIgnored = async (token: string, videoId: strin
     method: "DELETE"
   });
   if (!response.ok) {
-    // throw new Error("Error adding content to the download queue.");
+    throw new Error("Error removing video.");
     // return response.json();
   }
   return response.json();
@@ -103,8 +103,7 @@ export const sendMoveVideoQueuedIgnored = async (token: string, videoId: string,
     method: "POST"
   });
   if (!response.ok) {
-    // throw new Error("Error adding content to the download queue.");
-    // return response.json();
+    throw new Error("Error moving video to" + status + ".");
   }
   return response.json();
 };

@@ -96,6 +96,26 @@ const Download: NextPage = () => {
         })
         .catch(error => handleSetErrorMessage(error.message));
     }
+    const handleMoveVideoQueuedIgnored = (session: string, youtube_id: string, status: string) => {
+        sendMoveVideoQueuedIgnored(session, youtube_id, status).then(() => {
+            handleSetErrorMessage(null);
+        })
+        .catch(error => handleSetErrorMessage(error.message));
+    }
+    const handleDeleteVideoQueuedIgnored = (session: string, youtube_id: string) => {
+        sendDeleteVideoQueuedIgnored(session, youtube_id).then(() => {
+            handleSetErrorMessage(null);
+        })
+        .catch(error => handleSetErrorMessage(error.message));
+    }
+
+    const handleDeleteAllQueuedIgnored = (session: string, filter: string) => {
+        sendDeleteAllQueuedIgnored(session, filter).then(() => {
+            handleSetErrorMessage(null);
+        })
+        .catch(error => handleSetErrorMessage(error.message));
+    }
+
     return (
         <>
             <CustomHead title="Downloads" />
@@ -255,13 +275,13 @@ const Download: NextPage = () => {
                     {ignoredStatus && 
                         <div className="title-split">
                             <h2>Ignored from download</h2>
-                            <button onClick={() => sendDeleteAllQueuedIgnored(session.ta_token.token, "ignore")} title="Delete all previously ignored videos from the queue">Delete all ignored</button>
+                            <button onClick={() => handleDeleteAllQueuedIgnored(session.ta_token.token, "ignore")} title="Remove all ignored videos.">Remove all ignored</button>
                         </div>
                     }
                     {!ignoredStatus && 
                         <div className="title-split">
                             <h2>Download queue</h2>
-                            <button onClick={() => sendDeleteAllQueuedIgnored(session.ta_token.token, "pending")} title="Delete all pending videos from the queue">Delete all queued</button>
+                            <button onClick={() => handleDeleteAllQueuedIgnored(session.ta_token.token, "pending")} title="Remove all videos from the queue.">Remove all queued</button>
                         </div>
                     }
                     <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && !downloads?.message && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
@@ -293,8 +313,8 @@ const Download: NextPage = () => {
                                             {/* <p>Published: {{ video.source.published }} | Duration: {{ video.source.duration }} | {{ video.source.youtube_id }}</p> */}
                                             {ignoredStatus &&
                                                 <div>
-                                                    <button className="button-padding" title="Move this video to the download queue." onClick={() => sendMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "pending")}>Add to queue</button>
-                                                    <button className="button-padding" title="Remove this video from the ignored list." onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Remove</button>
+                                                    <button className="button-padding" title="Move this video to the download queue." onClick={() => handleMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "pending")}>Add to queue</button>
+                                                    <button className="button-padding" title="Remove this video from the ignored list." onClick={() => handleDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Remove</button>
                                                 </div>
                                             }        
                                             {/* {% if show_ignored_only %} */}
@@ -302,9 +322,9 @@ const Download: NextPage = () => {
                                                 {/* <button data-id="{{ video.source.youtube_id }}" onclick="addSingle(this)">Add to queue</button> */}
                                             {!ignoredStatus &&
                                                 <div>
-                                                    <button className="button-padding" title="Ignore this video." onClick={() => sendMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "ignore")}>Ignore</button>
+                                                    <button className="button-padding" title="Ignore this video." onClick={() => handleMoveVideoQueuedIgnored(session.ta_token.token, video?.youtube_id, "ignore")}>Ignore</button>
                                                     <button className="button-padding" title="Download this video now." onClick={() => console.log("downloadNow(this)")}>Download now</button>
-                                                    <button className="button-padding" title="Delete video from the queue." onClick={() => sendDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Delete</button>
+                                                    <button className="button-padding" title="Remove this video from the queue." onClick={() => handleDeleteVideoQueuedIgnored(session.ta_token.token, video?.youtube_id)}>Remove</button>
                                                 </div>
                                             }
                                             {/* {% else %} */}
