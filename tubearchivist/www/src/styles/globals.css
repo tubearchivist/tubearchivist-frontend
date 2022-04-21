@@ -528,6 +528,7 @@ button:hover {
 .pagination-item {
   padding: 5px;
   margin-right: 4px;
+  cursor: pointer;
   border: 1px solid;
 }
 
