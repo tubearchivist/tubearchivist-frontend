@@ -527,6 +527,7 @@ button:hover {
 
 .pagination-item {
   padding: 5px;
+  margin-right: 4px;
   border: 1px solid;
 }
 
