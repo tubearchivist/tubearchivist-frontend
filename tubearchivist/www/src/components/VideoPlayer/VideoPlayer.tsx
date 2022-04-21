@@ -2,9 +2,11 @@ import NextImage from "next/image";
 import NextLink from "next/link";
 import ReactPlayer from "react-player";
 import IconClose from "../../images/icon-close.svg";
-import { TA_BASE_URL } from "../../lib/constants";
+import { getTAUrl } from "../../lib/constants";
 import { formatNumbers } from "../../lib/utils";
 import { Data } from "../../types/video";
+
+const TA_BASE_URL = getTAUrl();
 
 type VideoPlayerProps = {
   selectedVideo: Data;
@@ -32,11 +34,7 @@ const VideoPlayer = ({
               light={false}
               playing // TODO: Not currently working
               playsinline
-              url={
-                isHome
-                  ? `${TA_BASE_URL}/media/${selectedVideo?.media_url}`
-                  : `${TA_BASE_URL}/${selectedVideo?.media_url}`
-              }
+              url={`${TA_BASE_URL.client}${selectedVideo?.media_url}`}
             />
             <SponsorBlock />
             {showStats ? (
