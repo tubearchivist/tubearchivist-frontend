@@ -22,6 +22,7 @@ type ViewStyle = "grid" | "list";
 type IgnoredStatus = boolean;
 type FormHidden = boolean;
 type ErrorMessage = string;
+type PageNumber = number;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const queryClient = new QueryClient();
@@ -36,8 +37,8 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
         };
     }
 
-    await queryClient.prefetchQuery(["downloads", session.ta_token.token, false], () =>
-        getDownloads(session.ta_token.token, false)
+    await queryClient.prefetchQuery(["downloads", session.ta_token.token, false, 1], () =>
+        getDownloads(session.ta_token.token, false, 1)
     );
 
     return {
@@ -52,6 +53,7 @@ const Download: NextPage = () => {
     const { data: session } = useSession();
 
     const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
+    const [pageNumber, setPageNumber] = useState<PageNumber>(1);
 
     const {
         data: downloads,
@@ -59,8 +61,8 @@ const Download: NextPage = () => {
         isLoading,
         refetch,
     } = useQuery(
-        ["downloads", session.ta_token.token, ignoredStatus],
-        () => getDownloads(session.ta_token.token, ignoredStatus),
+        ["downloads", session.ta_token.token, ignoredStatus, pageNumber],
+        () => getDownloads(session.ta_token.token, ignoredStatus, pageNumber),
         {
             enabled: !!session?.ta_token?.token,
             refetchInterval: 1500,
@@ -88,6 +90,11 @@ const Download: NextPage = () => {
     const handleSetErrorMessage = (selectedErrorMessage: ErrorMessage) => {
         setErrorMessage(selectedErrorMessage);
     };
+
+    const handleSetPageNumber = (selectedPageNumber: PageNumber) => {
+        setPageNumber(selectedPageNumber);
+    };
+
     const addToDownloadQueue = event => {
         event.preventDefault();
         sendDownloads(session.ta_token.token, event.target.vid_url.value).then(() => {
@@ -284,7 +291,7 @@ const Download: NextPage = () => {
                             <button onClick={() => handleDeleteAllQueuedIgnored(session.ta_token.token, "pending")} title="Remove all videos from the queue.">Remove all queued</button>
                         </div>
                     }
-                    <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && !downloads?.message && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
+                    <h3>Total videos: {downloads?.paginate?.total_hits} {!downloads?.paginate?.total_hits && !downloads?.message && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
                     <div className={`dl-list ${viewStyle}`}>                       
                         {!isLoading && !error && !downloads?.message &&
                             downloads?.data?.map((video) => {
@@ -366,6 +373,31 @@ const Download: NextPage = () => {
                                 {/* </div> */}
                             {/* {% endfor %} */}
                         {/* {% endif %} */}
+                    </div>
+                </div>
+                <div className="boxed-content">
+                    <div className="pagination">
+                        {pageNumber != 1 ? <a className="pagination-item" onClick={() => handleSetPageNumber(1)}>First</a> : ``}  
+                        {downloads?.paginate?.prev_pages &&
+                            downloads?.paginate?.prev_pages?.map((page) => {
+                                return (
+                                    <a key={`${page}`} className="pagination-item" onClick={() => handleSetPageNumber(page)}>{page}</a>
+                            )})
+                        }
+                        <span>&lt; Page {pageNumber}</span>
+                        <span> &gt;</span>
+                        {downloads?.paginate?.next_pages &&
+                            downloads?.paginate?.next_pages?.map((page) => {
+                                return (
+                                    <a key={`${page}`} className="pagination-item" onClick={() => handleSetPageNumber(page)}>{page}</a>
+                            )})
+                        }
+                        {downloads?.paginate?.next_pages?.forEach((page) => 
+                            <a className="pagination-item" onClick={() => handleSetPageNumber(page)}>{page}</a>
+                        )}
+                        {downloads?.paginate?.last_page &&
+                            <a className="pagination-item" onClick={() => handleSetPageNumber(downloads?.paginate?.last_page)}> Last ({downloads?.paginate?.last_page}) </a>
+                        }
                     </div>
                 </div>
                 {/* <script type="text/javascript" src="{% static 'progress.js' %}"></script> */}

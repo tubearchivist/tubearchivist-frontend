@@ -1,8 +1,19 @@
 export interface Download {
   data: Datum[];
   config: Config;
-  paginate: boolean;
+  paginate: Paginate;
   message: string;
+}
+
+export interface Paginate {
+  page_size: number;
+  page_from: number;
+  prev_pages: number[];
+  current_page: number;
+  max_hits: boolean;
+  last_page: number;
+  next_pages: number[];
+  total_hits: number;
 }
 
 // export interface DownloadResponse {

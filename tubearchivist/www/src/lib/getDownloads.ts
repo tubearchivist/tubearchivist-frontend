@@ -3,8 +3,8 @@ import { getTAUrl } from "./constants";
 
 const TA_BASE_URL = getTAUrl();
 
-export const getDownloads = async (token: string, filter: boolean): Promise<Download> => {
-  const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${filter ? 'ignore' : 'pending'}`, {
+export const getDownloads = async (token: string, filter: boolean, pageNumber: number): Promise<Download> => {
+  const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${filter ? 'ignore' : 'pending'}&page=${pageNumber}`, {
     headers: {
       Accept: "application/json",
       "Content-Type": "application/json",
