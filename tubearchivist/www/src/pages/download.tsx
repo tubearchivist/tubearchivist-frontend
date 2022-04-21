@@ -106,7 +106,7 @@ const Download: NextPage = () => {
                         <h1>Downloads</h1>
                     </div>
                     <div id="notifications">
-                        {error || !downloads?.data &&
+                        {(error || !downloads?.data) && !isLoading &&
                             <div className="error notification">
                                 <h3>API Connection Error</h3>
                                 <p></p>
