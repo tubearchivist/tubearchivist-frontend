@@ -81,6 +81,7 @@ const Download: NextPage = () => {
     const handleSetIgnoredStatus = (selectedIgnoredStatus: IgnoredStatus) => {
         setIgnoredStatus(selectedIgnoredStatus);
         refetch();
+        handleSetPageNumber(1);
     };
 
     const handleSetFormHidden = (selectedFormHidden: FormHidden) => {
