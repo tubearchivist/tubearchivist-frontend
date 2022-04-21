@@ -19,7 +19,6 @@ import { getTAUrl } from "../lib/constants";
 const TA_BASE_URL = getTAUrl();
 
 type ViewStyle = "grid" | "list";
-type Page = number;
 type IgnoredStatus = boolean;
 type FormHidden = boolean;
 type ErrorMessage = boolean;
@@ -40,7 +39,7 @@ export const getServerSideProps: GetServerSideProps = async (context) => {
     }
 
     await queryClient.prefetchQuery(["downloads", session.ta_token.token, false], () =>
-        getDownloads(session.ta_token.token, false, 1)
+        getDownloads(session.ta_token.token, false)
     );
 
     return {
@@ -55,7 +54,6 @@ const Download: NextPage = () => {
     const { data: session } = useSession();
 
     const [ignoredStatus, setIgnoredStatus] = useState<IgnoredStatus>(false);
-    const [formHidden, setFormHidden] = useState<FormHidden>(true);
 
     const {
         data: downloads,
@@ -64,7 +62,7 @@ const Download: NextPage = () => {
         refetch,
     } = useQuery(
         ["downloads", session.ta_token.token, ignoredStatus],
-        () => getDownloads(session.ta_token.token, ignoredStatus, page),
+        () => getDownloads(session.ta_token.token, ignoredStatus),
         {
             enabled: !!session?.ta_token?.token,
             refetchInterval: 1500,
@@ -72,10 +70,9 @@ const Download: NextPage = () => {
         }
     );
 
+    const [formHidden, setFormHidden] = useState<FormHidden>(true);
     const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
     const [errorMessage, setErrorMessage] = useState<ErrorMessage>(false);
-    const [page, setPage] = useState<Page>(1);
-    
 
     const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
         setViewStyle(selectedViewStyle);
@@ -94,12 +91,6 @@ const Download: NextPage = () => {
         setErrorMessage(selectedErrorMessage);
     };
 
-    const handleSetPage = (selectedPage: Page) => {
-        console.log(page);
-        setPage(selectedPage);
-        console.log(page);
-    };
-
     const addToDownloadQueue = event => {
         event.preventDefault();
         sendDownloads(session.ta_token.token, event.target.vid_url.value).then((response) => !response.message ? handleSetErrorMessage(false) : handleSetErrorMessage(true));
@@ -116,7 +107,7 @@ const Download: NextPage = () => {
                         <h1>Downloads</h1>
                     </div>
                     <div id="notifications">
-                        {downloads?.message &&
+                        {error &&
                             <div className="error notification">
                                 <h3>{downloads?.message}</h3>
                                 <p></p>
@@ -125,7 +116,7 @@ const Download: NextPage = () => {
                         {errorMessage &&
                             <div className="error notification">
                                 <h3>Failed to extract links.</h3>
-                                <p>Not a video, channel or playlist ID or URL</p>
+                                <p>Not a video, channel, playlist ID or URL</p>
                             </div>
                         }
                         {
@@ -274,7 +265,7 @@ const Download: NextPage = () => {
                             <button onClick={() => sendDeleteAllQueuedIgnored(session.ta_token.token, "pending")} title="Delete all pending videos from the queue">Delete all queued</button>
                         </div>
                     }
-                    <h3>Total videos: {downloads?.data?.length ? downloads?.data?.length : 'N/A'} {!downloads?.data?.length && !downloads?.message && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
+                    <h3>Total videos: {downloads?.data?.length} {!downloads?.data?.length && !downloads?.message && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
                     <div className={`dl-list ${viewStyle}`}>                       
                         {!isLoading && !error && !downloads?.message &&
                             downloads?.data?.map((video) => {
@@ -356,22 +347,6 @@ const Download: NextPage = () => {
                                 {/* </div> */}
                             {/* {% endfor %} */}
                         {/* {% endif %} */}
-                    </div>
-                </div>
-                <div className="boxed-content">
-                    <div className="pagination">
-                        <a className="pagination-item" onClick={() => handleSetPage(1)}>First</a>
-                        <a className="pagination-item" onClick={() => handleSetPage(2)}>2</a>
-                        <span>&lt; Page 3</span>
-                        <span> &gt;</span>
-                        <a className="pagination-item" onClick={() => handleSetPage(4)}>4</a>
-                        <a className="pagination-item" onClick={() => handleSetPage(5)}> Last (5) </a>
-                        <a className="pagination-item" onClick={() => handleSetPage(5)}> Max (5) </a>
-                    </div>
-                    <div className="pagination">
-                        <a className="pagination-item" href="?page=2">
-                            Last (2)
-                         </a>
                     </div>
                 </div>
                 {/* <script type="text/javascript" src="{% static 'progress.js' %}"></script> */}
