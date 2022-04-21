@@ -21,9 +21,7 @@ const TA_BASE_URL = getTAUrl();
 type ViewStyle = "grid" | "list";
 type IgnoredStatus = boolean;
 type FormHidden = boolean;
-type ErrorMessage = boolean;
-
-
+type ErrorMessage = string;
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
     const queryClient = new QueryClient();
@@ -72,7 +70,7 @@ const Download: NextPage = () => {
 
     const [formHidden, setFormHidden] = useState<FormHidden>(true);
     const [viewStyle, setViewStyle] = useState<ViewStyle>(downloads?.config?.default_view?.downloads);
-    const [errorMessage, setErrorMessage] = useState<ErrorMessage>(false);
+    const [errorMessage, setErrorMessage] = useState<ErrorMessage>(null);
 
     const handleSetViewstyle = (selectedViewStyle: ViewStyle) => {
         setViewStyle(selectedViewStyle);
@@ -90,13 +88,14 @@ const Download: NextPage = () => {
     const handleSetErrorMessage = (selectedErrorMessage: ErrorMessage) => {
         setErrorMessage(selectedErrorMessage);
     };
-
     const addToDownloadQueue = event => {
         event.preventDefault();
-        sendDownloads(session.ta_token.token, event.target.vid_url.value).then((response) => !response.message ? handleSetErrorMessage(false) : handleSetErrorMessage(true));
-        errorMessage ? handleSetFormHidden(false) : handleSetFormHidden(true);
+        sendDownloads(session.ta_token.token, event.target.vid_url.value).then(() => {
+            handleSetErrorMessage(null);
+            handleSetFormHidden(true);
+        })
+        .catch(error => handleSetErrorMessage(error.message));
     }
-
     return (
         <>
             <CustomHead title="Downloads" />
@@ -109,14 +108,14 @@ const Download: NextPage = () => {
                     <div id="notifications">
                         {error &&
                             <div className="error notification">
-                                <h3>{downloads?.message}</h3>
-                                <p></p>
+                                <h3>API Connection Error</h3>
+                                <p>{error}</p>
                             </div>
                         }
                         {errorMessage &&
                             <div className="error notification">
-                                <h3>Failed to extract links.</h3>
-                                <p>Not a video, channel, playlist ID or URL</p>
+                                <h3>Failed to add downloads to the queue.</h3>
+                                <p>{errorMessage}</p>
                             </div>
                         }
                         {

@@ -12,7 +12,6 @@ export const getDownloads = async (token: string, filter: boolean): Promise<Down
       mode: "no-cors",
     },
   });
-  console.log(response.ok);
   if (response.ok) {
     return response.json();
   } else {
@@ -45,11 +44,14 @@ export const sendDownloads = async (token: string, input: string): Promise<Downl
     },
     method: "POST"
   });
-  if (!response.ok) {
-    // throw new Error("Error adding content to the download queue.");
-    // return response.json();
+  if (response.ok) {
+    return response.json();
+  } else if (response.status == 400) {
+    throw new Error("Failed to extract links. Please input IDs or URLs for videos, channels, or playlists.");
+  } else {
+    throw new Error("Failed to connect to the API.");
   }
-  return response.json();
+  
 };
 
 export const sendDeleteAllQueuedIgnored = async (token: string, filter: string): Promise<Download> => {
