@@ -292,7 +292,7 @@ const Download: NextPage = () => {
                             <button onClick={() => handleDeleteAllQueuedIgnored(session.ta_token.token, "pending")} title="Remove all videos from the queue.">Remove all queued</button>
                         </div>
                     }
-                    <h3>Total videos: {downloads?.paginate?.total_hits} {!downloads && !downloads.message && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
+                    <h3>Total videos: {downloads?.paginate?.total_hits} {!downloads && !downloads?.message && !ignoredStatus && <p>No videos queued for download. Press rescan subscriptions to check if there are any new videos.</p>}</h3>
                     <div className={`dl-list ${viewStyle}`}>                       
                         {!isLoading && !error && !downloads?.message &&
                             downloads?.data?.map((video) => {
