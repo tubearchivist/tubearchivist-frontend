@@ -6,6 +6,7 @@ import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import { getTAUrl } from "../lib/constants";
 import { getChannels } from "../lib/getChannels";
+import { formatNumbers } from "../lib/utils";
 
 const TA_BASE_URL = getTAUrl();
 
@@ -170,7 +171,7 @@ const Channel: NextPage = () => {
                             </a>
                           </h3>
                           {/* {% if channel.source.channel_subs >= 1000000 %} */}
-                          <p>Subscribers: {channel?.channel_subs} </p>
+                          <p>Subscribers: {formatNumbers(channel?.channel_subs)} </p>
                           {/* {% else %} */}
                         </div>
                       </div>
