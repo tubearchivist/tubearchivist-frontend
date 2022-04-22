@@ -1,11 +1,14 @@
+# Tube Archivist Frontend
+
+This repo is WIP, recreation of [Tube Archivist](https://github.com/tubearchivist/tubearchivist) frontend in NextJS/React.
+
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
 ## Setup your environment
-- Clone the `feat/react-frontend` branch, base folder of the frontend is in `tubearchivist/www`
-- Copy *.env.local.example* to *.env.local* and set:
-  - **NEXTAUTH_SECRET**: Some long random string
-  - **NEXTAUTH_URL**: Your frontend, most likely `http://localhost:3000`
-  - **NEXT_PUBLIC_TUBEARCHIVIST_URL**: Your Tube Archivist backend testing server, e.g. `http://localhost:8000`
+Copy *.env.local.example* to *.env.local* and set:
+- **NEXTAUTH_SECRET**: Some long random string
+- **NEXTAUTH_URL**: Your frontend, most likely `http://localhost:3000`
+- **NEXT_PUBLIC_TUBEARCHIVIST_URL**: Your Tube Archivist backend testing server, e.g. `http://localhost:8000`
 
 ## Getting Started
 
