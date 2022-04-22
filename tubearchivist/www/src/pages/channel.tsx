@@ -185,20 +185,20 @@ const Channel: NextPage = () => {
                             className="unsubscribe"
                             type="button"
                             id="{{ channel.source.channel_id }}"
-                            onClick={() => console.log("unsubscribe(this.id)")}
-                            title="Unsubscribe from {{ channel.source.channel_name }}"
+                            onClick={() => console.log("unsubscribe(this.id) -> toggleSubscribe()")}
+                            title={`${channel?.channel_subscribed ? "Unsubscribe from" : "Subscribe to"} ${channel?.channel_name}`} 
                           >
-                            Unsubscribe
+                            {channel?.channel_subscribed ? "Unsubscribe" : "Subscribe"}
                           </button>
                           {/* {% else %} */}
-                          <button
+                          {/* <button
                             type="button"
                             id="{{ channel.source.channel_id }}"
                             onClick={() => console.log("subscribe(this.id)")}
                             title="Subscribe to {{ channel.source.channel_name }}"
                           >
                             Subscribe
-                          </button>
+                          </button> */}
                           {/* {% endif %} */}
                         </div>
                       </div>
