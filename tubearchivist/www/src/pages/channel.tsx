@@ -6,6 +6,7 @@ import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import { getTAUrl } from "../lib/constants";
 import { getChannels } from "../lib/getChannels";
+import { formatNumbers } from "../lib/utils";
 
 const TA_BASE_URL = getTAUrl();
 
@@ -170,7 +171,7 @@ const Channel: NextPage = () => {
                             </a>
                           </h3>
                           {/* {% if channel.source.channel_subs >= 1000000 %} */}
-                          <p>Subscribers: {channel?.channel_subs} </p>
+                          <p>Subscribers: {formatNumbers(channel?.channel_subs)} </p>
                           {/* {% else %} */}
                         </div>
                       </div>
@@ -184,20 +185,20 @@ const Channel: NextPage = () => {
                             className="unsubscribe"
                             type="button"
                             id="{{ channel.source.channel_id }}"
-                            onClick={() => console.log("unsubscribe(this.id)")}
-                            title="Unsubscribe from {{ channel.source.channel_name }}"
+                            onClick={() => console.log("unsubscribe(this.id) -> toggleSubscribe()")}
+                            title={`${channel?.channel_subscribed ? "Unsubscribe from" : "Subscribe to"} ${channel?.channel_name}`} 
                           >
-                            Unsubscribe
+                            {channel?.channel_subscribed ? "Unsubscribe" : "Subscribe"}
                           </button>
                           {/* {% else %} */}
-                          <button
+                          {/* <button
                             type="button"
                             id="{{ channel.source.channel_id }}"
                             onClick={() => console.log("subscribe(this.id)")}
                             title="Subscribe to {{ channel.source.channel_name }}"
                           >
                             Subscribe
-                          </button>
+                          </button> */}
                           {/* {% endif %} */}
                         </div>
                       </div>

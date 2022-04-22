@@ -98,6 +98,10 @@ textarea {
   width: 100%;
 }
 
+.button-padding {
+  margin: 0 4px 0 0;
+}
+
 button {
   border-radius: 0;
   padding: 5px 13px;
@@ -326,6 +330,13 @@ button:hover {
   justify-content: flex-end;
 }
 
+.view-icons-margin {
+  /* width: 30px; */
+  margin: 5px 10px;
+  /* cursor: pointer;
+  filter: var(--img-filter); */
+}
+
 .view-icons img {
   width: 30px;
   margin: 5px 10px;
@@ -516,6 +527,8 @@ button:hover {
 
 .pagination-item {
   padding: 5px;
+  margin-right: 4px;
+  cursor: pointer;
   border: 1px solid;
 }
 
