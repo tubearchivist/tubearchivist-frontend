@@ -1,5 +1,7 @@
-import { Download, Task } from "../types/download";
+import { Download, Task, Tasks } from "../types/download";
 import { getTAUrl } from "./constants";
+
+
 
 const TA_BASE_URL = getTAUrl();
 
@@ -108,7 +110,7 @@ export const sendMoveVideoQueuedIgnored = async (token: string, videoId: string,
   return response.json();
 };
 
-export const sendTasks = async (token: string, task: string): Promise<Task> => {
+export const sendTasks = async (token: string, task: Tasks): Promise<Task> => {
   var data = {
     "run": task
   };
@@ -123,7 +125,7 @@ export const sendTasks = async (token: string, task: string): Promise<Task> => {
     method: "POST"
   });
   if (!response.ok) {
-    throw new Error("Error running task: " + task + ".");
+    throw new Error(`Error running task: ${task}.`);
   }
   return response.json();
 };
