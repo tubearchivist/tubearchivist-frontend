@@ -1,4 +1,4 @@
-import { Download } from "../types/download";
+import { Download, Task } from "../types/download";
 import { getTAUrl } from "./constants";
 
 const TA_BASE_URL = getTAUrl();
@@ -104,6 +104,26 @@ export const sendMoveVideoQueuedIgnored = async (token: string, videoId: string,
   });
   if (!response.ok) {
     throw new Error("Error moving video to" + status + ".");
+  }
+  return response.json();
+};
+
+export const sendTasks = async (token: string, task: string): Promise<Task> => {
+  var data = {
+    "run": task
+  };
+  const response = await fetch(`${TA_BASE_URL.server}/api/task/`, {
+    body: JSON.stringify(data),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+      mode: "no-cors",
+    },
+    method: "POST"
+  });
+  if (!response.ok) {
+    throw new Error("Error running task: " + task + ".");
   }
   return response.json();
 };

@@ -5,6 +5,11 @@ export interface Download {
   message: string;
 }
 
+export interface Task {
+  success: boolean;
+  task: string;
+}
+
 export interface Paginate {
   page_size: number;
   page_from: number;

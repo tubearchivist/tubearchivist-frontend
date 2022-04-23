@@ -5,8 +5,7 @@ import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
 import NextImage from "next/image";
-import { getDownloads, sendDeleteAllQueuedIgnored, sendDeleteVideoQueuedIgnored, sendMoveVideoQueuedIgnored } from "../lib/getDownloads";
-import { sendDownloads } from "../lib/getDownloads";
+import { getDownloads, sendDownloads, sendDeleteAllQueuedIgnored, sendDeleteVideoQueuedIgnored, sendMoveVideoQueuedIgnored, sendTasks } from "../lib/getDownloads";
 import RescanIcon from "../images/icon-rescan.svg";
 import DownloadIcon from "../images/icon-download.svg";
 import AddIcon from "../images/icon-add.svg";
@@ -124,6 +123,18 @@ const Download: NextPage = () => {
         .catch(error => handleSetErrorMessage(error.message));
     }
 
+    const handleSendTask = (session: string, task: string) => {
+        sendTasks(session, task).then((response) => {
+            if (response.success) {
+                handleSetErrorMessage(null);
+            } else {
+                handleSetErrorMessage("Error running task: " + response.task + ".");
+            }
+            
+        })
+        .catch(error => handleSetErrorMessage(error.message));
+    }
+
     return (
         <>
             <CustomHead title="Downloads" />
@@ -202,7 +213,7 @@ const Download: NextPage = () => {
                                 alt="rescan-icon"
                                 title="Rescan subscriptions"
                                 // className="rotate-img" // Set when rescanning
-                                onClick={() => console.log("rescanPending()")}
+                                onClick={() => handleSendTask(session.ta_token.token, "rescan_pending")}
                             />
                             {/* <img id="rescan-icon" onclick="rescanPending()" src="{% static 'img/icon-rescan.svg' %}" alt="rescan-icon"></img> */}
                             <p>Rescan subscriptions</p>
@@ -215,7 +226,7 @@ const Download: NextPage = () => {
                                 alt="download-icon"
                                 title="Start download"
                                 // className="bounce-img" // Set when video is downloading
-                                onClick={() => console.log("dlPending()")}
+                                onClick={() => handleSendTask(session.ta_token.token, "download_pending")}
                             />
                             {/* <img id="download-icon" onclick="dlPending()" src="{% static 'img/icon-download.svg' %}" alt="download-icon"></img> */}
                             <p>Start download</p>
