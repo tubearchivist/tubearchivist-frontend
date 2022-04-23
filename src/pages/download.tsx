@@ -14,6 +14,7 @@ import ListViewIcon from "../images/icon-listview.svg";
 import StopIcon from "../images/icon-stop.svg";
 import CloseIcon from "../images/icon-close.svg";
 import { getTAUrl } from "../lib/constants";
+import { Tasks } from "../types/download";
 
 const TA_BASE_URL = getTAUrl();
 
@@ -123,12 +124,12 @@ const Download: NextPage = () => {
         .catch(error => handleSetErrorMessage(error.message));
     }
 
-    const handleSendTask = (session: string, task: string) => {
+    const handleSendTask = (session: string, task: Tasks) => {
         sendTasks(session, task).then((response) => {
             if (response.success) {
                 handleSetErrorMessage(null);
             } else {
-                handleSetErrorMessage("Error running task: " + response.task + ".");
+                handleSetErrorMessage(`Error running task: ${response.task}.`);
             }
             
         })
