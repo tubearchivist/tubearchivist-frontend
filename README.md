@@ -10,6 +10,8 @@ Copy *.env.local.example* to *.env.local* and set:
 - **NEXTAUTH_URL**: Your frontend, most likely `http://localhost:3000`
 - **NEXT_PUBLIC_TUBEARCHIVIST_URL**: Your Tube Archivist backend testing server, e.g. `http://localhost:8000`
 
+In general: Use the [unstable builds](https://github.com/tubearchivist/tubearchivist/blob/master/CONTRIBUTING.md#releases) from Tube Archivist or build the image yourself from *testing* branch. 
+
 ## Getting Started
 
 First, run the development server:
@@ -23,7 +25,7 @@ yarn dev
 ### Errors:
 - *next command not found*: Install next with `npm install next`
 - *Error: Invalid src prop [...] hostname [...] is not configured under images in your `next.config.js`*: Add the *NEXT_PUBLIC_TUBEARCHIVIST_URL* to the list of *domains*.
-- *CORS errors in console*: In your backend in `tubearchivist/config/settings.py` replace the line containing *CORS_ALLOWED_ORIGIN_REGEXES* with `CORS_ORIGIN_ALLOW_ALL = True` and rebuild the container. NEVER do that on network accessible installation.
+- *CORS errors in console*: Set the environment variable `DISABLE_CORS=True` to the Tube Archivist container to circumvent this protection. NEVER do that on network accessible installation.
 
 Open [http://localhost:3000](http://localhost:3000) with your browser to see the result.
 
