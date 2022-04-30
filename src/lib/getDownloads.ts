@@ -1,9 +1,14 @@
-import { Download } from "../types/download";
+import { Download, Task, Tasks } from "../types/download";
 import { getTAUrl } from "./constants";
+
+
 
 const TA_BASE_URL = getTAUrl();
 
 export const getDownloads = async (token: string, filter: boolean, pageNumber: number): Promise<Download> => {
+  if (!token) {
+    throw new Error(`Unable to fetch downloads, no token provided.`);
+  }
   const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${filter ? 'ignore' : 'pending'}&page=${pageNumber}`, {
     headers: {
       Accept: "application/json",
@@ -28,6 +33,9 @@ export const getDownloads = async (token: string, filter: boolean, pageNumber: n
 };
 
 export const sendDownloads = async (token: string, input: string): Promise<Download> => {
+  if (!token) {
+    throw new Error(`Unable to send downloads, no token provided.`);
+  }
   var data = {
     "data": [{
       "youtube_id": input,
@@ -42,7 +50,7 @@ export const sendDownloads = async (token: string, input: string): Promise<Downl
       Authorization: `Token ${token}`,
       mode: "no-cors",
     },
-    method: "POST"
+    method: "POST",
   });
   if (response.ok) {
     return response.json();
@@ -55,6 +63,9 @@ export const sendDownloads = async (token: string, input: string): Promise<Downl
 };
 
 export const sendDeleteAllQueuedIgnored = async (token: string, filter: string): Promise<Download> => {
+  if (!token) {
+    throw new Error(`Unable to delete downloads, no token provided.`);
+  }
   const response = await fetch(`${TA_BASE_URL.server}/api/download/?filter=${filter}`, {
     headers: {
       Accept: "application/json",
@@ -62,7 +73,7 @@ export const sendDeleteAllQueuedIgnored = async (token: string, filter: string):
       Authorization: `Token ${token}`,
       mode: "no-cors",
     },
-    method: "DELETE"
+    method: "DELETE",
   });
   if (!response.ok) {
     throw new Error("Error removing all videos.");
@@ -72,6 +83,9 @@ export const sendDeleteAllQueuedIgnored = async (token: string, filter: string):
 };
 
 export const sendDeleteVideoQueuedIgnored = async (token: string, videoId: string): Promise<Download> => {
+  if (!token) {
+    throw new Error(`Unable to delete downloads, no token provided.`);
+  }
   const response = await fetch(`${TA_BASE_URL.server}/api/download/${videoId}/`, {
     headers: {
       Accept: "application/json",
@@ -79,7 +93,7 @@ export const sendDeleteVideoQueuedIgnored = async (token: string, videoId: strin
       Authorization: `Token ${token}`,
       mode: "no-cors",
     },
-    method: "DELETE"
+    method: "DELETE",
   });
   if (!response.ok) {
     throw new Error("Error removing video.");
@@ -89,6 +103,9 @@ export const sendDeleteVideoQueuedIgnored = async (token: string, videoId: strin
 };
 
 export const sendMoveVideoQueuedIgnored = async (token: string, videoId: string, status: string): Promise<Download> => {
+  if (!token) {
+    throw new Error(`Unable to move downloads, no token provided.`);
+  }
   var data = {
     "status": status
   };
@@ -100,10 +117,33 @@ export const sendMoveVideoQueuedIgnored = async (token: string, videoId: string,
       Authorization: `Token ${token}`,
       mode: "no-cors",
     },
-    method: "POST"
+    method: "POST",
   });
   if (!response.ok) {
     throw new Error("Error moving video to" + status + ".");
+  }
+  return response.json();
+};
+
+export const sendTasks = async (token: string, task: Tasks): Promise<Task> => {
+  if (!token) {
+    throw new Error(`Unable to start task, no token provided.`);
+  }
+  var data = {
+    "run": task
+  };
+  const response = await fetch(`${TA_BASE_URL.server}/api/task/`, {
+    body: JSON.stringify(data),
+    headers: {
+      Accept: "application/json",
+      "Content-Type": "application/json",
+      Authorization: `Token ${token}`,
+      mode: "no-cors",
+    },
+    method: "POST",
+  });
+  if (!response.ok) {
+    throw new Error(`Error running task: ${task}.`);
   }
   return response.json();
 };
