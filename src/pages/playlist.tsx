@@ -5,13 +5,15 @@ import { useState } from "react";
 import { dehydrate, QueryClient, useQuery } from "react-query";
 import { CustomHead } from "../components/CustomHead";
 import { Layout } from "../components/Layout";
-import { TA_BASE_URL } from "../lib/constants";
+import { getTAUrl } from "../lib/constants";
 import { getPlaylists } from "../lib/getPlaylists";
 import IconAdd from "../images/icon-add.svg";
 import IconListView from "../images/icon-listview.svg";
 import IconGridView from "../images/icon-gridview.svg";
 
 type ViewStyle = "grid" | "list";
+
+const TA_BASE_URL = getTAUrl();
 
 export const getServerSideProps: GetServerSideProps = async (context) => {
   const queryClient = new QueryClient();
@@ -140,7 +142,7 @@ const Playlist = () => {
                   <div className="playlist-thumbnail">
                     <a href="{% url 'playlist_id' playlist.source.playlist_id %}">
                       <img
-                        src={`${TA_BASE_URL}/${playlist.playlist_thumbnail}`}
+                        src={`${TA_BASE_URL.client}/${playlist.playlist_thumbnail}`}
                         alt={`${playlist.playlist_id}-thumbnail`}
                       />
                     </a>

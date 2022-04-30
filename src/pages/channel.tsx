@@ -171,7 +171,9 @@ const Channel: NextPage = () => {
                             </a>
                           </h3>
                           {/* {% if channel.source.channel_subs >= 1000000 %} */}
-                          <p>Subscribers: {formatNumbers(channel?.channel_subs)} </p>
+                          <p>
+                            Subscribers: {formatNumbers(channel?.channel_subs)}{" "}
+                          </p>
                           {/* {% else %} */}
                         </div>
                       </div>
@@ -185,10 +187,20 @@ const Channel: NextPage = () => {
                             className="unsubscribe"
                             type="button"
                             id="{{ channel.source.channel_id }}"
-                            onClick={() => console.log("unsubscribe(this.id) -> toggleSubscribe()")}
-                            title={`${channel?.channel_subscribed ? "Unsubscribe from" : "Subscribe to"} ${channel?.channel_name}`} 
+                            onClick={() =>
+                              console.log(
+                                "unsubscribe(this.id) -> toggleSubscribe()"
+                              )
+                            }
+                            title={`${
+                              channel?.channel_subscribed
+                                ? "Unsubscribe from"
+                                : "Subscribe to"
+                            } ${channel?.channel_name}`}
                           >
-                            {channel?.channel_subscribed ? "Unsubscribe" : "Subscribe"}
+                            {channel?.channel_subscribed
+                              ? "Unsubscribe"
+                              : "Subscribe"}
                           </button>
                           {/* {% else %} */}
                           {/* <button
