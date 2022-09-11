@@ -5,6 +5,13 @@ export interface Download {
   message: string;
 }
 
+export interface Task {
+  success: boolean;
+  task: string;
+}
+
+export type Tasks = "download_pending" | "rescan_pending";
+
 export interface Paginate {
   page_size: number;
   page_from: number;
@@ -15,11 +22,6 @@ export interface Paginate {
   next_pages: number[];
   total_hits: number;
 }
-
-// export interface DownloadResponse {
-//   data: Datum[];
-//   message: string;
-// }
 
 export interface Config {
   archive: Archive;
@@ -106,19 +108,6 @@ export interface Datum {
   title: string;
   vid_thumb_url: string;
   youtube_id: string;
-  
-  // active: boolean;
-  // category: Category[];
-  // channel: Channel;
-  // date_downloaded: number;
-  // description: string;
-  // media_url: string;
-  // player: Player;
-  // playlist: Playlist[];
-  // stats: Stats;
-  // tags: string[];
-  // vid_last_refresh: LastRefresh;
-  // vid_thumb_base64: string;
 }
 
 export enum Category {
