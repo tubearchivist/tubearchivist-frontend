@@ -1,80 +1,32 @@
-# multi stage to build tube archivist
-# first stage to build python wheel, copy into final image
+FROM node:16-bullseye-slim as deps
 
+WORKDIR /myapp
 
-# First stage to build python wheel
-FROM python:3.10.4-slim-bullseye AS builder
-ARG TARGETPLATFORM
+ADD package.json yarn.lock .npmrc ./
+RUN yarn install
 
-RUN apt-get update
-RUN apt-get install -y --no-install-recommends build-essential gcc curl
+# Build the app
+FROM node:16-bullseye-slim as build
 
-# get newest patched ffmpeg and ffprobe builds for amd64 fall back to repo ffmpeg for arm64
-RUN if [ "$TARGETPLATFORM" = "linux/amd64" ] ; then \
-    curl -s https://api.github.com/repos/yt-dlp/FFmpeg-Builds/releases/latest \
-        | grep browser_download_url \
-        | grep ".*master.*linux64.*tar.xz" \
-        | cut -d '"' -f 4 \
-        | xargs curl -L --output ffmpeg.tar.xz && \
-        tar -xf ffmpeg.tar.xz --strip-components=2 --no-anchored -C /usr/bin/ "ffmpeg" && \
-        tar -xf ffmpeg.tar.xz --strip-components=2 --no-anchored -C /usr/bin/ "ffprobe" && \
-        rm ffmpeg.tar.xz \
-    ; elif [ "$TARGETPLATFORM" = "linux/arm64" ] ; then \
-        apt-get -y update && apt-get -y install --no-install-recommends ffmpeg && rm -rf /var/lib/apt/lists/* \
-    ; fi
+WORKDIR /myapp
 
-# install requirements
-COPY ./tubearchivist/requirements.txt /requirements.txt
-RUN pip install --user -r requirements.txt
+COPY --from=deps /myapp/node_modules /myapp/node_modules
 
-# build final image
-FROM python:3.10.4-slim-bullseye as tubearchivist
+ADD . .
+RUN yarn build
 
-ARG TARGETPLATFORM
-ARG INSTALL_DEBUG
+# Finally, build the production image with minimal footprint
+FROM node:16-bullseye-slim
 
-ENV PYTHONUNBUFFERED 1
+ENV PORT="8080"
+ENV NODE_ENV="production"
 
-# copy build requirements
-COPY --from=builder /root/.local /root/.local
-COPY --from=builder /usr/bin/ffmpeg /usr/bin/ffmpeg
-COPY --from=builder /usr/bin/ffprobe /usr/bin/ffprobe
-ENV PATH=/root/.local/bin:$PATH
+WORKDIR /myapp
 
-# install distro packages needed
-RUN apt-get clean && apt-get -y update && apt-get -y install --no-install-recommends \
-    nginx \
-    atomicparsley \
-    curl && rm -rf /var/lib/apt/lists/*
+COPY --from=deps /myapp/node_modules /myapp/node_modules
 
-# install debug tools for testing environment
-RUN if [ "$INSTALL_DEBUG" ] ; then \
-        apt-get -y update && apt-get -y install --no-install-recommends \
-        vim htop bmon net-tools iputils-ping procps \
-        && pip install --user ipython \
-    ; fi
+COPY --from=build /myapp/build /myapp/build
+COPY --from=build /myapp/public /myapp/public
+COPY --from=build /myapp/package.json /myapp/package.json
 
-# make folders
-RUN mkdir /cache
-RUN mkdir /youtube
-RUN mkdir /app
-
-# copy config files
-COPY docker_assets/nginx.conf /etc/nginx/sites-available/default
-
-# copy application into container
-COPY ./tubearchivist /app
-COPY ./docker_assets/run.sh /app
-COPY ./docker_assets/uwsgi.ini /app
-
-# volumes
-VOLUME /cache
-VOLUME /youtube
-
-# start
-WORKDIR /app
-EXPOSE 8000
-
-RUN chmod +x ./run.sh
-
-CMD ["./run.sh"]
+ENTRYPOINT [ "yarn", "start" ]
