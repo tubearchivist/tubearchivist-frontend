@@ -10,7 +10,7 @@ export const loader: LoaderFunction = async ({ context, request }) => {
   const { data } = await getVideos(API_KEY);
   const withVideoThumbs = data.map((d) => ({
     ...d,
-    resolved_thumb_url: `http://localhost:8000${d.vid_thumb_url}`,
+    resolved_thumb_url: `${process.env.PUBLIC_API_URL}${d.vid_thumb_url}`,
   }));
 
   return withVideoThumbs;

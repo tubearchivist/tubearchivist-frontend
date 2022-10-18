@@ -29,7 +29,7 @@ export const meta: MetaFunction = () => ({
 export async function loader({ request }: LoaderArgs) {
   return {
     ENV: {
-      API_URL: process.env.API_URL,
+      PUBLIC_API_URL: process.env.PUBLIC_API_URL,
     },
   };
 }
