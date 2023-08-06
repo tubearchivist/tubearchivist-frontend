@@ -1,12 +1,11 @@
 import { useState } from "react";
 import IconPlay from "~/images/icon-play.svg";
-import type { Videos } from "~/routes/index";
-import type { Datum } from "~/types/Videos";
 import VideoPlayer from "../VideoPlayer/VideoPlayer";
+import type { Datum } from "~/types/Videos";
 
 type ViewStyle = "grid grid-3" | "list";
 
-const VideoList = ({ videos }: { videos: Videos }) => {
+const VideoList = ({ videos }: { videos: Datum[] }) => {
   const [selectedVideoUrl, setSelectedVideoUrl] = useState<Datum>();
   const [viewStyle, setViewStyle] = useState<ViewStyle>("grid grid-3");
 
@@ -22,7 +21,7 @@ const VideoList = ({ videos }: { videos: Videos }) => {
     setViewStyle(selectedViewStyle);
   };
 
-  if (videos.length < 1) {
+  if (!videos) {
     return (
       <div className="boxed-content">
         <h2>No videos found...</h2>
@@ -110,7 +109,7 @@ const VideoList = ({ videos }: { videos: Videos }) => {
                 <div style={{ cursor: "pointer" }} onClick={() => handleSelectedVideo(video)}>
                   <div className={`video-thumb-wrap ${viewStyle}`}>
                     <div className="video-thumb">
-                      <img src={video.resolved_thumb_url} alt="video-thumb" />
+                      <img src={`http://localhost:8000${video.vid_thumb_url}`} alt="video-thumb" />
                       {/* {% if video.source.player.progress %} */}
                       <div
                         className="video-progress-bar"

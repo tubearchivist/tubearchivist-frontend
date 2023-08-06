@@ -10,11 +10,10 @@ import {
 } from "@remix-run/react";
 import { Layout } from "./components/Layout";
 import styles from "./styles/dark.css";
-import global from "./styles/globals.css";
+import global from "./styles/style.css";
 
 export const links: LinksFunction = () => {
   return [
-    // { rel: "stylesheet", href: tailwindStylesheetUrl },
     { rel: "stylesheet", href: styles },
     { rel: "stylesheet", href: global },
   ];
@@ -35,14 +34,14 @@ export async function loader({ request }: LoaderArgs) {
 }
 
 export default function App() {
-  const data = useLoaderData();
+  const data = useLoaderData<typeof loader>();
   return (
-    <html lang="en" className="h-full">
+    <html lang="en">
       <head>
         <Meta />
         <Links />
       </head>
-      <body className="h-full">
+      <body>
         <Layout>
           <Outlet />
         </Layout>

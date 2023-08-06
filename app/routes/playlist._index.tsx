@@ -1,15 +1,14 @@
-import { useState } from "react";
 import { Link, useLoaderData } from "@remix-run/react";
+import { useState } from "react";
 import IconAdd from "~/images/icon-add.svg";
 import IconGridView from "~/images/icon-gridview.svg";
 import IconListView from "~/images/icon-listview.svg";
-import type { LoaderFunction } from "@remix-run/server-runtime";
-import { getPlaylists } from "~/lib/getPlaylists";
-import { API_KEY } from "~/lib/constants.server";
-import type { Playlists } from "~/types/playlists";
 import { API_URL } from "~/lib/constants";
+import { API_KEY } from "~/lib/constants.server";
+import { getPlaylists } from "~/lib/getPlaylists";
+import type { Playlists } from "~/types/playlists";
 
-export const loader: LoaderFunction = async () => {
+export const loader = async () => {
   const playlists = await getPlaylists(API_KEY);
 
   return playlists;
@@ -97,10 +96,7 @@ const Playlist = () => {
           ) : (
             playlists.data.map((playlist) => {
               return (
-                <div
-                  key={playlist.playlist_id}
-                  className={`playlist-item ${viewStyle}`}
-                >
+                <div key={playlist.playlist_id} className={`playlist-item ${viewStyle}`}>
                   <div className="playlist-thumbnail">
                     <Link to={playlist.playlist_id}>
                       <img

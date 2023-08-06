@@ -5,7 +5,7 @@ import { API_URL } from "~/lib/constants";
 import { API_KEY } from "~/lib/constants.server";
 import { getChannels } from "~/lib/getChannels";
 import type { Channels } from "~/types/channels";
-import { formatNumbers } from "../../lib/utils";
+import { formatNumbers } from "../lib/utils";
 
 export const loader: LoaderFunction = async () => {
   const channels = await getChannels(API_KEY);
@@ -93,10 +93,7 @@ const ChannelsPage = () => {
           ) : (
             channels.data?.map((channel) => {
               return (
-                <div
-                  key={channel.channel_id}
-                  className={`channel-item ${viewStyle}`}
-                >
+                <div key={channel.channel_id} className={`channel-item ${viewStyle}`}>
                   <div className={`channel-banner ${viewStyle}`}>
                     <Link to={channel.channel_id}>
                       <img
@@ -109,22 +106,15 @@ const ChannelsPage = () => {
                     <div className="info-box-item">
                       <div className="round-img">
                         <Link to={channel.channel_id}>
-                          <img
-                            src={`${API_URL}${channel.channel_thumb_url}`}
-                            alt="channel-thumb"
-                          />
+                          <img src={`${API_URL}${channel.channel_thumb_url}`} alt="channel-thumb" />
                         </Link>
                       </div>
                       <div>
                         <h3>
-                          <Link to={channel.channel_id}>
-                            {channel?.channel_name}
-                          </Link>
+                          <Link to={channel.channel_id}>{channel?.channel_name}</Link>
                         </h3>
                         {/* {% if channel.source.channel_subs >= 1000000 %} */}
-                        <p>
-                          Subscribers: {formatNumbers(channel?.channel_subs)}
-                        </p>
+                        <p>Subscribers: {formatNumbers(channel?.channel_subs)}</p>
                         {/* {% else %} */}
                       </div>
                     </div>
@@ -136,20 +126,12 @@ const ChannelsPage = () => {
                           className="unsubscribe"
                           type="button"
                           id="{{ channel.source.channel_id }}"
-                          onClick={() =>
-                            console.log(
-                              "unsubscribe(this.id) -> toggleSubscribe()"
-                            )
-                          }
+                          onClick={() => console.log("unsubscribe(this.id) -> toggleSubscribe()")}
                           title={`${
-                            channel?.channel_subscribed
-                              ? "Unsubscribe from"
-                              : "Subscribe to"
+                            channel?.channel_subscribed ? "Unsubscribe from" : "Subscribe to"
                           } ${channel?.channel_name}`}
                         >
-                          {channel?.channel_subscribed
-                            ? "Unsubscribe"
-                            : "Subscribe"}
+                          {channel?.channel_subscribed ? "Unsubscribe" : "Subscribe"}
                         </button>
                         {/* {% else %} */}
                         {/* <button

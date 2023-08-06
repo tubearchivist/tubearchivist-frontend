@@ -5,10 +5,10 @@ type Props = {
   children: React.ReactNode;
 };
 
-export const Layout: React.FC<Props> = ({ children }) => {
+export const Layout = ({ children }: Props) => {
   return (
     <>
-      <div style={{ minHeight: "100vh" }} className="main-content">
+      <div className="main-content">
         <Nav />
         {children}
       </div>

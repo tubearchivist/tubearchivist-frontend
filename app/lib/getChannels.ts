@@ -18,13 +18,10 @@ export const getChannels = async (token: string): Promise<Channels> => {
   if (!response.ok) {
     throw new Error("Error getting channel information");
   }
-  return response.json();
+  return await response.json();
 };
 
-export const getChannel = async (
-  token: string,
-  id: string | undefined
-): Promise<Channel> => {
+export const getChannel = async (token: string, id: string | undefined): Promise<Channel> => {
   if (!token) {
     throw new Error(`Unable to fetch channels, no token provided`);
   }
